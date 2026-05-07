@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="#1E1E1E"
+    android:layoutDirection="rtl"
+    android:layout_marginBottom="4dp">
+
+    <TextView android:fontFamily="@font/yekan"
+        android:id="@+id/tvCommentAvatar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/ic_avatar_placeholder"
+        android:gravity="center"
+        android:text="U"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvCommentUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Football"
+                android:textColor="#E91E63"
+                android:textSize="12sp"
+                android:layout_marginLeft="20dp"
+                android:gravity="right"
+                android:textStyle="bold" />
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvCommentTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الان"
+                android:textColor="#999999"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <TextView android:fontFamily="@font/yekan"
+            android:id="@+id/tvCommentText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="نظر کاربر اینجا نوشته می شود"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp" />
+    </LinearLayout>
+</LinearLayout>

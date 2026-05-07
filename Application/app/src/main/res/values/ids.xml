@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tvAvatar" type="id" />
+    <item name="tvUsername" type="id" />
+    <item name="ivThumbnail" type="id" />
+    <item name="tvLikes" type="id" />
+    <item name="tvComments" type="id" />
+    <item name="tvStats" type="id" />
+    <item name="tvCaption" type="id" />
+</resources>

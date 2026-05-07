@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- حالت عادی -->
+    <item android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <solid android:color="#aa480a3c" />
+            <corners android:radius="40dp" />
+            <stroke
+                android:width="1dp"
+                android:color="#aa480a3c" />
+            <padding
+                android:left="12dp"
+                android:right="12dp"
+                android:top="12dp"
+                android:bottom="12dp" />
+        </shape>
+    </item>
+
+    <!-- حالت فشرده شده (کمی تیره‌تر) -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#aa680a3c" />
+            <corners android:radius="40dp" />
+            <stroke
+                android:width="1dp"
+                android:color="#aa680a3c" />
+            <padding
+                android:left="12dp"
+                android:right="12dp"
+                android:top="12dp"
+                android:bottom="12dp" />
+        </shape>
+    </item>
+
+</selector>

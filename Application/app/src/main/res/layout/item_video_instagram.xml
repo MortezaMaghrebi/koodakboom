@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:layoutDirection="rtl"
+    android:layout_marginBottom="8dp"
+    android:elevation="2dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <TextView android:fontFamily="@font/yekan"
+            android:id="@+id/tvAvatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/avatar_bg"
+            android:gravity="center"
+            android:text="N"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="username"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="۲ ساعت پیش"
+                android:textSize="11sp"
+                android:textColor="#94a3b8" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/btnMore"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_more"
+            android:padding="4dp"
+            android:contentDescription="بیشتر" />
+
+    </LinearLayout>
+
+    <!-- Video Container (WebView برای پخش) -->
+    <FrameLayout
+        android:id="@+id/videoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000">
+
+        <!-- Thumbnail (تصویر پیش‌نمایش) -->
+        <ImageView
+            android:id="@+id/ivThumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_placeholder"
+            android:visibility="visible" />
+
+        <!-- WebView برای پخش امبد (در ابتدا مخفی) -->
+        <WebView
+            android:id="@+id/webViewPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:visibility="gone" />
+
+        <!-- دکمه پخش روی تصویر -->
+        <ImageView
+            android:id="@+id/btnPlayVideo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play"
+            android:background="@drawable/play_square_bg"
+            android:padding="15dp"
+            android:visibility="visible" />
+
+        <!-- مدت زمان روی تصویر -->
+        <TextView android:fontFamily="@font/yekan"
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="8dp"
+            android:background="#80000000"
+            android:padding="4dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="0:00"
+            android:textColor="#ffffff"
+            android:textSize="11sp" />
+
+        <!-- ProgressBar در حال بارگذاری -->
+        <ProgressBar
+            android:id="@+id/progressBarVideo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="#E91E63"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- Actions -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+        <ImageView
+            android:id="@+id/btnOpenFullscreen"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_fullscreen"
+            android:padding="6dp"
+            android:contentDescription="باز کردن در صفحه جداگانه" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginEnd="16dp">
+
+            <ImageView
+                android:id="@+id/ivLike"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_like_outline"
+                android:padding="4dp" />
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="0"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginEnd="16dp">
+
+            <ImageView
+                android:id="@+id/ivComment"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_comment"
+                android:padding="4dp" />
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="0"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivShare"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_share"
+            android:padding="4dp" />
+
+
+    </LinearLayout>
+
+    <TextView android:fontFamily="@font/yekan"
+        android:id="@+id/tvStats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="4dp"
+        android:text="👁️ 0 بازدید"
+        android:textSize="14sp"
+        android:textColor="#64748b"
+        android:textStyle="bold" />
+
+    <TextView android:fontFamily="@font/yekan"
+        android:id="@+id/tvCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="12dp"
+        android:text="Caption"
+        android:textColor="#000000"
+        android:textSize="15sp" />
+
+</LinearLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <ProgressBar
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:indeterminateTint="#3b82f6" />
+
+    <TextView android:fontFamily="@font/yekan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" در حال بارگذاری..."
+        android:layout_marginStart="12dp"
+        android:textColor="#3b82f6" />
+</LinearLayout>

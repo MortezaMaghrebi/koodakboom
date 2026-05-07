@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layoutDirection="rtl"
+    android:layout_height="match_parent">
+
+    <!-- صفحه خانه (Home) -->
+    <LinearLayout
+        android:id="@+id/pageHome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <!-- هدر -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🎬 کلیپ‌چین"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#1e293b" />
+
+                <ImageView
+                    android:id="@+id/homeSearchBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_search"
+                    android:background="@drawable/search_bg"
+                    android:padding="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Hero Video -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@drawable/hero_bg">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivTitlePicture"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/titleimage" />
+
+                </androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/playHeroBtn"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_play_black"
+                    android:background="@drawable/play_bg_glass" />
+
+
+            </RelativeLayout>
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="کرومی و مای ملودی"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp" />
+
+            <TextView android:fontFamily="@font/yekan"
+                android:id="@+id/tvDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="انیمیشن کودکان | 12 قسمت"
+                android:textColor="#475569"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- 3 Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center">
+
+            <!-- دکمه 1: نمایش ویدیوها -->
+            <LinearLayout
+                android:id="@+id/showVideosBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/button_bg"
+                android:padding="12dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:text="📱"
+                    android:textSize="24sp"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:text="تمامی ویدیوها"
+                    android:textSize="15sp"
+                    android:textColor="#1e293b"
+                    android:layout_marginTop="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+            </LinearLayout>
+
+            <!-- دکمه 2: نظر دادن -->
+            <LinearLayout
+                android:id="@+id/commentMainBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/button_bg"
+                android:padding="12dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:text="💬"
+                    android:textSize="24sp"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:text="نظر دادن"
+                    android:textSize="15sp"
+                    android:textColor="#1e293b"
+                    android:layout_marginTop="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+            </LinearLayout>
+
+            <!-- دکمه 3: سایر برنامه‌ها -->
+            <LinearLayout
+                android:id="@+id/otherAppsBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/button_bg"
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:text="📦"
+                    android:textSize="24sp"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:text="سایر برنامه‌ها"
+                    android:textSize="15sp"
+                    android:textColor="#1e293b"
+                    android:layout_marginTop="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <com.adivery.sdk.AdiveryBannerAdView
+            android:layout_marginTop="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/banner_ad"
+            app:banner_size="banner"/>
+        <com.adivery.sdk.AdiveryBannerAdView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/banner_ad2"
+            app:placement_id="e354955a-a82c-418f-80cb-735ef2ecea85"
+            app:banner_size="banner"/>
+    </LinearLayout>
+
+
+
+    <!-- صفحه لیست (List) -->
+    <LinearLayout
+        android:id="@+id/pageList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#ffffff">
+
+            <LinearLayout
+                android:id="@+id/backToHomeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/back_bg"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="8dp"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_back" />
+                <TextView
+                    android:fontFamily="@font/yekan"
+                android:text="بازگشت به صفحه اول" android:textSize="14sp"  android:layout_height="match_parent" android:layout_width="wrap_content"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/searchInput"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="جستجوی ویدیوها..."
+                android:background="@drawable/search_bg"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:id="@+id/toggleGrid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📱 اینستاگرامی"
+                    android:textColor="@color/white"
+                    android:background="@drawable/toggle_active_bg"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView android:fontFamily="@font/yekan"
+                    android:id="@+id/toggleList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📋 نمای لیست"
+                    android:textColor="@color/black"
+                    android:background="@drawable/toggle_inactive_bg"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</FrameLayout>
