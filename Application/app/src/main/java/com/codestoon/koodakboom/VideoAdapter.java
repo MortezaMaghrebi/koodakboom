@@ -42,7 +42,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     MainActivity mainActivity;
     public VideoAdapter(MainActivity mainActivity, Context context, List<VideoModel> videoList, String viewType, OnVideoClickListener listener) {
-        this.mainActivity=mainActivity;
+        this.mainActivity = mainActivity;
         this.context = context;
         this.videoList = videoList;
         this.viewType = viewType;
@@ -89,26 +89,40 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void bindInstagramView(InstagramViewHolder holder, VideoModel video, boolean isFavorite, int position) {
         // تنظیم اطلاعات پایه
         holder.username.setText(video.getUsername());
-        holder.tvTime.setText(" ");//2 saat pish
+        holder.tvTime.setText(" ");
 
-        String likeCount = formatNumber(video.getLikes());
-        String commentCount = formatNumber(video.getComments());
-        String viewCount = formatNumber(video.getViews());
+       // String likeCount = formatNumber(video.getLikes());
+        //String commentCount = formatNumber(video.getComments());
+       // String viewCount = formatNumber(video.getViews());
 
-        holder.tvLikes.setText(likeCount);
-        holder.tvComments.setText(commentCount);
-        holder.tvStats.setText( video.getDuration()+" ⏱️ "+"    "+viewCount +" 👁️ " );
-        holder.tvCaption.setText( video.getTitle());
+        //holder.tvLikes.setText(likeCount);
+        //holder.tvComments.setText(commentCount);
+        holder.tvStats.setText(video.getDuration() + " ⏱️ " );
+        holder.tvCaption.setText(video.getTitle());
 
         updateLikeButton(holder.btnLike, isFavorite);
 
-        // لود تصویر thumbnail
-        String imageFileName =video.getThumbnailName();
-        Glide.with(context)
-                .load(Uri.parse("file:///android_asset/" + imageFileName))
-                .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_placeholder)
-                .into(holder.thumbnail);
+        // لود تصویر thumbnail - پشتیبانی از URL و فایل محلی
+        String thumbnailUrl = video.getThumbnailName();
+        if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+            if (thumbnailUrl.startsWith("http://") || thumbnailUrl.startsWith("https://")) {
+                // بارگذاری از URL
+                Glide.with(context)
+                        .load(thumbnailUrl)
+                        .placeholder(R.drawable.ic_placeholder)
+                        .error(R.drawable.ic_placeholder)
+                        .into(holder.thumbnail);
+            } else {
+                // بارگذاری از فایل asset
+                Glide.with(context)
+                        .load(Uri.parse("file:///android_asset/" + thumbnailUrl))
+                        .placeholder(R.drawable.ic_placeholder)
+                        .error(R.drawable.ic_placeholder)
+                        .into(holder.thumbnail);
+            }
+        } else {
+            holder.thumbnail.setImageResource(R.drawable.ic_placeholder);
+        }
 
         // آواتار
         String firstChar = video.getUsername().length() > 0 ?
@@ -169,17 +183,14 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             Toast.makeText(context, "👤 کانال: " + video.getUsername(), Toast.LENGTH_SHORT).show();
         });
 
-        // کلیک روی دکمه نظر
-        holder.btnComment.setOnClickListener(v -> {
-            Toast.makeText(context, "💬 نظر برای: " + video.getTitle(), Toast.LENGTH_SHORT).show();
-        });
+
 
         // کلیک روی اشتراک
         holder.btnShare.setOnClickListener(v -> {
             shareVideo(video);
         });
 
-        holder.thumbnail.setOnClickListener(v->{
+        holder.thumbnail.setOnClickListener(v -> {
             if (listener != null) {
                 stopVideo(holder);
                 currentlyPlayingPosition = -1;
@@ -195,7 +206,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         });
     }
-
 
     private void showWebView(InstagramViewHolder holder, VideoModel video) {
         holder.thumbnail.setVisibility(View.GONE);
@@ -267,14 +277,27 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.title.setText(video.getTitle());
         holder.details.setText("👤 " + video.getUsername() + " · 👁️ " + formatNumber(video.getViews()) + " · ⏱️ " + video.getDuration());
 
-        // لود تصویر thumbnail
-        String imageFileName =video.getThumbnailName();
-
-        Glide.with(context)
-                .load(Uri.parse("file:///android_asset/" + imageFileName))
-                .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_placeholder)
-                .into(holder.thumbnail);
+        // لود تصویر thumbnail - پشتیبانی از URL و فایل محلی
+        String thumbnailUrl = video.getThumbnailName();
+        if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+            if (thumbnailUrl.startsWith("http://") || thumbnailUrl.startsWith("https://")) {
+                // بارگذاری از URL
+                Glide.with(context)
+                        .load(thumbnailUrl)
+                        .placeholder(R.drawable.ic_placeholder)
+                        .error(R.drawable.ic_placeholder)
+                        .into(holder.thumbnail);
+            } else {
+                // بارگذاری از فایل asset
+                Glide.with(context)
+                        .load(Uri.parse("file:///android_asset/" + thumbnailUrl))
+                        .placeholder(R.drawable.ic_placeholder)
+                        .error(R.drawable.ic_placeholder)
+                        .into(holder.thumbnail);
+            }
+        } else {
+            holder.thumbnail.setImageResource(R.drawable.ic_placeholder);
+        }
 
         updateLikeButton(holder.btnLike, isFavorite);
 
@@ -321,7 +344,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if (isFavorite) {
             dataManager.removeFromFavorites(video.getVideoKey());
-            //Toast.makeText(context, "❌ از علاقه‌مندی‌ها حذف شد", Toast.LENGTH_SHORT).show();
         } else {
             FavoriteModel favorite = new FavoriteModel(
                     video.getVideoKey(),
@@ -332,7 +354,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     video.getDuration()
             );
             dataManager.addToFavorites(favorite);
-            //Toast.makeText(context, "❤️ به علاقه‌مندی‌ها اضافه شد", Toast.LENGTH_SHORT).show();
         }
 
         if (holder instanceof InstagramViewHolder) {
@@ -363,8 +384,13 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return videoList.size();
     }
 
+    public void updateVideos(List<VideoModel> newVideos) {
+        this.videoList = newVideos;
+        notifyDataSetChanged();
+    }
+
     static class InstagramViewHolder extends RecyclerView.ViewHolder {
-        TextView username, tvTime, tvLikes, tvComments, tvStats, tvCaption, avatar, tvDuration;
+        TextView username, tvTime, tvStats, tvCaption, avatar, tvDuration;
         ImageView thumbnail, btnLike, btnComment, btnShare, btnPlay, btnOpenFullscreen;
         WebView webView;
         ProgressBar progressBar;
@@ -374,16 +400,15 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(itemView);
             username = itemView.findViewById(R.id.tvUsername);
             tvTime = itemView.findViewById(R.id.tvTime);
-            tvLikes = itemView.findViewById(R.id.tvLikes);
-            tvComments = itemView.findViewById(R.id.tvComments);
+            //tvLikes = itemView.findViewById(R.id.tvLikes);
+            //tvComments = itemView.findViewById(R.id.tvComments);
             tvStats = itemView.findViewById(R.id.tvStats);
             tvCaption = itemView.findViewById(R.id.tvCaption);
             avatar = itemView.findViewById(R.id.tvAvatar);
             thumbnail = itemView.findViewById(R.id.ivThumbnail);
             tvDuration = itemView.findViewById(R.id.tvDuration);
             btnLike = itemView.findViewById(R.id.ivLike);
-            btnComment = itemView.findViewById(R.id.ivComment);
-            btnShare = itemView.findViewById(R.id.ivShare);
+             btnShare = itemView.findViewById(R.id.ivShare);
             btnPlay = itemView.findViewById(R.id.btnPlayVideo);
             btnOpenFullscreen = itemView.findViewById(R.id.btnOpenFullscreen);
             webView = itemView.findViewById(R.id.webViewPlayer);
