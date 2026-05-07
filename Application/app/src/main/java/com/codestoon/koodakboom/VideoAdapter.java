@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -35,6 +36,11 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private DataManager dataManager;
     private WatchHistoryManager historyManager;
     private int currentlyPlayingPosition = -1;
+
+    // برای مدیریت تمام صفحه
+    private View customView;
+    private WebChromeClient.CustomViewCallback customViewCallback;
+    private FrameLayout fullscreenContainer;
 
     public interface OnVideoClickListener {
         void onVideoClick(String videoKey);
@@ -96,7 +102,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         updateLikeButton(holder.btnLike, isFavorite);
 
-        // نشان دیده شده
         if (isWatched) {
             holder.tvWatchedBadge.setVisibility(View.VISIBLE);
             holder.tvWatchedBadge.setText("✓ دیده شده");
@@ -187,7 +192,73 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         });
 
-        holder.webView.setWebChromeClient(new WebChromeClient());
+        // WebChromeClient برای پشتیبانی از تمام صفحه
+        holder.webView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                // اگر قبلاً customView وجود دارد
+                if (customView != null) {
+                    callback.onCustomViewHidden();
+                    return;
+                }
+
+                customView = view;
+                customViewCallback = callback;
+
+                // پیدا کردن Activity و اضافه کردن View به fullscreen container
+                if (mainActivity != null) {
+                    FrameLayout fullscreenContainer = mainActivity.findViewById(R.id.fullscreenContainer);
+                    if (fullscreenContainer != null) {
+                        fullscreenContainer.setVisibility(View.VISIBLE);
+                        fullscreenContainer.addView(customView, new FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                        ));
+                        mainActivity.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    } else {
+                        // اگر fullscreenContainer وجود نداشت، از روش جایگزین استفاده کن
+                        ViewParent parent = holder.webView.getParent();
+                        if (parent instanceof FrameLayout) {
+                            ((FrameLayout) parent).addView(customView, new FrameLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT
+                            ));
+                        }
+                    }
+                }
+
+                holder.webView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onHideCustomView() {
+                if (customView == null) return;
+
+                // پیدا کردن Activity و حذف View
+                if (mainActivity != null) {
+                    FrameLayout fullscreenContainer = mainActivity.findViewById(R.id.fullscreenContainer);
+                    if (fullscreenContainer != null) {
+                        fullscreenContainer.removeView(customView);
+                        fullscreenContainer.setVisibility(View.GONE);
+                        mainActivity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    } else {
+                        ViewParent parent = customView.getParent();
+                        if (parent instanceof FrameLayout) {
+                            ((FrameLayout) parent).removeView(customView);
+                        }
+                    }
+                }
+
+                if (customViewCallback != null) {
+                    customViewCallback.onCustomViewHidden();
+                }
+
+                customView = null;
+                customViewCallback = null;
+                holder.webView.setVisibility(View.VISIBLE);
+            }
+        });
 
         String html = "<!DOCTYPE html>\n" +
                 "<html>\n" +
@@ -219,12 +290,24 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.progressBar.setVisibility(View.GONE);
 
         if (holder.webView != null) {
+            // بستن تمام صفحه اگر باز است
+            if (customView != null && customViewCallback != null) {
+                customViewCallback.onCustomViewHidden();
+                customView = null;
+                customViewCallback = null;
+            }
             holder.webView.loadUrl("about:blank");
         }
     }
 
     private void stopVideo(InstagramViewHolder holder) {
         if (holder.webView != null) {
+            // بستن تمام صفحه اگر باز است
+            if (customView != null && customViewCallback != null) {
+                customViewCallback.onCustomViewHidden();
+                customView = null;
+                customViewCallback = null;
+            }
             holder.webView.loadUrl("about:blank");
         }
         hideWebView(holder);
