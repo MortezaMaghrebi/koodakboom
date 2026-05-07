@@ -39,6 +39,22 @@ public class PlaylistModel {
         return videoCount;
     }
 
+    public int getWatchedCount(WatchHistoryManager historyManager) {
+        int count = 0;
+        for (VideoItem video : videos) {
+            if (historyManager.isEpisodeWatched(name, video.getVideoKey())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int getProgressPercent(WatchHistoryManager historyManager) {
+        if (videos == null || videos.isEmpty()) return 0;
+        int watched = getWatchedCount(historyManager);
+        return (watched * 100) / videos.size();
+    }
+
     public static class VideoItem {
         private String playlistName;
         private String title;

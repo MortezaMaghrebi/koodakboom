@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:layoutDirection="rtl">
 
-    <!-- صفحه خانه (Home) - کودک بوم با اسکرول تمام صفحه -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollHome"
         android:layout_width="match_parent"
@@ -20,7 +19,6 @@
             android:orientation="vertical"
             android:background="#FFF9F0">
 
-            <!-- هدر -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,7 +67,6 @@
                     android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- Hero Banner -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -131,7 +128,6 @@
                     android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- عنوان بخش پلی‌لیست‌ها -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -161,7 +157,6 @@
                     android:textColor="#E67E22" />
             </LinearLayout>
 
-            <!-- RecyclerView برای نمایش پلی‌لیست‌ها -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPlaylists"
                 android:layout_width="match_parent"
@@ -173,7 +168,6 @@
                 android:paddingBottom="8dp"
                 android:clipToPadding="false" />
 
-            <!-- 3 دکمه پایین صفحه -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -250,6 +244,7 @@
                     android:gravity="center"
                     android:background="@drawable/button_bg"
                     android:padding="12dp"
+                    android:layout_marginStart="4dp"
                     android:clickable="true"
                     android:focusable="true">
 
@@ -271,7 +266,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- بنر تبلیغات -->
             <com.adivery.sdk.AdiveryBannerAdView
                 android:id="@+id/banner_ad"
                 android:layout_width="wrap_content"
@@ -284,7 +278,6 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- صفحه لیست ویدیوها با اسکرول تمام صفحه -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollList"
         android:layout_width="match_parent"
@@ -300,7 +293,6 @@
             android:orientation="vertical"
             android:background="#F9F5F0">
 
-            <!-- هدر صفحه لیست -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -402,7 +394,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- RecyclerView با ارتفاع wrap_content -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
@@ -410,7 +401,6 @@
                 android:nestedScrollingEnabled="false"
                 android:padding="8dp" />
 
-            <!-- بنر تبلیغات دوم -->
             <com.adivery.sdk.AdiveryBannerAdView
                 android:id="@+id/banner_ad2"
                 android:layout_width="wrap_content"
@@ -425,5 +415,76 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/pageSearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#F9F5F0"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:elevation="4dp">
+
+            <LinearLayout
+                android:id="@+id/btnBackFromSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/back_bg"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_back" />
+
+                <TextView
+                    android:fontFamily="@font/yekan"
+                    android:text="بازگشت"
+                    android:textSize="14sp"
+                    android:textColor="#E67E22"
+                    android:layout_marginStart="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/searchGlobalInput"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="🔍 جستجو در بین همه ویدیوها..."
+                android:background="@drawable/search_bg"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:fontFamily="@font/yekan"
+                android:id="@+id/tvSearchResultCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="12sp"
+                android:textColor="#E67E22" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSearchResultsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false" />
+
+    </LinearLayout>
 
 </FrameLayout>

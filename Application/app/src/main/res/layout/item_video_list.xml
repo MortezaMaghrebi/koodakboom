@@ -11,7 +11,6 @@
     android:gravity="center_vertical"
     android:elevation="2dp">
 
-    <!-- تصویر بندانگشتی -->
     <FrameLayout
         android:layout_width="100dp"
         android:layout_height="70dp">
@@ -23,7 +22,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_placeholder" />
 
-        <!-- آیکون پخش کوچک -->
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -33,7 +31,6 @@
 
     </FrameLayout>
 
-    <!-- اطلاعات ویدیو -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -41,7 +38,8 @@
         android:layout_marginStart="12dp"
         android:orientation="vertical">
 
-        <TextView android:fontFamily="@font/yekan"
+        <TextView
+            android:fontFamily="@font/yekan"
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,18 +50,29 @@
             android:ellipsize="end"
             android:textStyle="bold" />
 
-        <TextView android:fontFamily="@font/yekan"
+        <TextView
+            android:fontFamily="@font/yekan"
             android:id="@+id/tvDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="👤 کاربر · 👁️ 0 بازدید · ⏱️ 0:00"
+            android:text="👤 کاربر · ⏱️ 0:00"
             android:textColor="#64748b"
             android:textSize="11sp" />
 
+        <TextView
+            android:fontFamily="@font/yekan"
+            android:id="@+id/tvWatchedBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓ دیده شده"
+            android:textSize="10sp"
+            android:textColor="#10B981"
+            android:visibility="gone"
+            android:layout_marginTop="4dp" />
+
     </LinearLayout>
 
-    <!-- دکمه لایک و تعداد -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,7 +88,8 @@
             android:padding="6dp"
             android:contentDescription="پسندیدن" />
 
-        <TextView android:fontFamily="@font/yekan"
+        <TextView
+            android:fontFamily="@font/yekan"
             android:id="@+id/tvLikeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

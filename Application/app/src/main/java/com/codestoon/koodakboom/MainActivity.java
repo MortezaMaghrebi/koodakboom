@@ -5,7 +5,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     final String ADDIVERY_BANNER_ID = "e354955a-a82c-418f-80cb-735ef2ecea85";
 
     private ImageView playHeroBtn, ivHeroImage, homeSearchBtn;
-    private EditText searchInput;
-    private TextView toggleGrid, toggleList, tvPlaylistCount, tvHeroTitle, tvHeroDescription, tvListTitle, tvListDescription;
-    private RecyclerView rvPlaylists, recyclerView;
+    private EditText searchInput, searchGlobalInput;
+    private TextView toggleGrid, toggleList, tvPlaylistCount, tvHeroTitle, tvHeroDescription, tvListTitle, tvListDescription, tvSearchResultCount;
+    private RecyclerView rvPlaylists, recyclerView, rvSearchResultsList;
 
     private VideoAdapter videoAdapter;
     private PlaylistAdapter playlistAdapter;
@@ -49,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
     private String currentView = "instagram";
     private int rewardedCount = 0;
     private boolean isOnHomePage = true;
+    private boolean isOnSearchPage = false;
     private long lastPauseTime = 0L;
+
+    private LinearLayout pageSearch;
+    private LinearLayout btnBackFromSearch;
 
     @Override
     protected void onPause() {
@@ -75,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         loadPlaylistsFromAssets();
         setupHomePage();
         setupListPage();
+        setupSearchPage();
         setupAdivery();
         setupBackPressed();
 
@@ -82,30 +90,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        // تصاویر
         playHeroBtn = findViewById(R.id.playHeroBtn);
         ivHeroImage = findViewById(R.id.ivTitlePicture);
         homeSearchBtn = findViewById(R.id.homeSearchBtn);
-
-        // ادیت‌تکست
         searchInput = findViewById(R.id.searchInput);
-
-        // TextViewها
         toggleGrid = findViewById(R.id.toggleGrid);
         toggleList = findViewById(R.id.toggleList);
         tvPlaylistCount = findViewById(R.id.tvPlaylistCount);
-
-        // TextViewهای صفحه اصلی (Hero)
         tvHeroTitle = findViewById(R.id.tvHeroTitle);
         tvHeroDescription = findViewById(R.id.tvHeroDescription);
-
-        // TextViewهای صفحه لیست
         tvListTitle = findViewById(R.id.tvListTitle);
         tvListDescription = findViewById(R.id.tvListDescription);
-
-        // RecyclerViewها
         rvPlaylists = findViewById(R.id.rvPlaylists);
         recyclerView = findViewById(R.id.recyclerView);
+        pageSearch = findViewById(R.id.pageSearch);
+        searchGlobalInput = findViewById(R.id.searchGlobalInput);
+        rvSearchResultsList = findViewById(R.id.rvSearchResultsList);
+        tvSearchResultCount = findViewById(R.id.tvSearchResultCount);
+        btnBackFromSearch = findViewById(R.id.btnBackFromSearch);
     }
 
     private void loadPlaylistsFromAssets() {
@@ -144,40 +146,22 @@ public class MainActivity extends AppCompatActivity {
                         .error(R.drawable.titleimage)
                         .into(ivHeroImage);
             }
-
-            // تنظیم اطلاعات Hero
-            if (tvHeroTitle != null) {
-                tvHeroTitle.setText(allPlaylists.get(0).getName());
-            }
-            if (tvHeroDescription != null) {
-                tvHeroDescription.setText(allPlaylists.get(0).getVideoCount() + " قسمت");
-            }
+            if (tvHeroTitle != null) tvHeroTitle.setText(allPlaylists.get(0).getName());
+            if (tvHeroDescription != null) tvHeroDescription.setText(allPlaylists.get(0).getVideoCount() + " قسمت");
         }
 
         playHeroBtn.setOnClickListener(v -> {
-            if (!allPlaylists.isEmpty()) {
-                openPlaylistVideos(allPlaylists.get(0));
-            }
+            if (!allPlaylists.isEmpty()) openPlaylistVideos(allPlaylists.get(0));
         });
 
-        homeSearchBtn.setOnClickListener(v -> {
-            if (!allPlaylists.isEmpty()) {
-                openPlaylistVideos(allPlaylists.get(0));
-            } else {
-                showListPage();
-            }
-        });
+        homeSearchBtn.setOnClickListener(v -> showSearchPage());
 
-        playlistAdapter = new PlaylistAdapter(this, allPlaylists, playlist -> {
-            openPlaylistVideos(playlist);
-        });
+        playlistAdapter = new PlaylistAdapter(this, allPlaylists, playlist -> openPlaylistVideos(playlist));
         rvPlaylists.setLayoutManager(new LinearLayoutManager(this));
         rvPlaylists.setAdapter(playlistAdapter);
 
         findViewById(R.id.showVideosBtn).setOnClickListener(v -> {
-            if (!allPlaylists.isEmpty()) {
-                openPlaylistVideos(allPlaylists.get(0));
-            }
+            if (!allPlaylists.isEmpty()) openPlaylistVideos(allPlaylists.get(0));
         });
 
         findViewById(R.id.commentMainBtn).setOnClickListener(v -> {
@@ -188,14 +172,72 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.otherAppsBtn).setOnClickListener(v -> com.codestoon.koodakboom.StoreIntents.openDeveloperPage(MainActivity.this));
     }
 
+    private void setupSearchPage() {
+        searchGlobalInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                performGlobalSearch(s.toString());
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        btnBackFromSearch.setOnClickListener(v -> {
+            showHomePage();
+            searchGlobalInput.setText("");
+        });
+    }
+
+    private void performGlobalSearch(String query) {
+        List<SearchResultItem> results = new ArrayList<>();
+
+        if (query.isEmpty()) {
+            if (tvSearchResultCount != null) tvSearchResultCount.setText("جستجو کنید...");
+            if (rvSearchResultsList != null) rvSearchResultsList.setAdapter(null);
+            return;
+        }
+
+        for (PlaylistModel playlist : allPlaylists) {
+            for (PlaylistModel.VideoItem video : playlist.getVideos()) {
+                if (video.getTitle().contains(query) || playlist.getName().contains(query)) {
+                    results.add(new SearchResultItem(playlist.getName(), video));
+                }
+            }
+        }
+
+        if (tvSearchResultCount != null) {
+            tvSearchResultCount.setText(results.size() + " نتیجه برای \"" + query + "\"");
+        }
+
+        SearchResultAdapter adapter = new SearchResultAdapter(results, item -> {
+            openPlaylistAndPlayVideo(item.getPlaylistName(), item.getVideo());
+        });
+        rvSearchResultsList.setLayoutManager(new LinearLayoutManager(this));
+        rvSearchResultsList.setAdapter(adapter);
+    }
+
+    private void openPlaylistAndPlayVideo(String playlistName, PlaylistModel.VideoItem video) {
+        for (PlaylistModel playlist : allPlaylists) {
+            if (playlist.getName().equals(playlistName)) {
+                currentPlaylist = playlist;
+                currentVideos = new ArrayList<>(playlist.getVideos());
+                if (tvListTitle != null) tvListTitle.setText(playlist.getName());
+                if (tvListDescription != null) tvListDescription.setText(playlist.getVideoCount() + " قسمت");
+                setupVideoRecyclerView();
+                showListPage();
+                openVideoInAparat(video.getVideoKey());
+                break;
+            }
+        }
+    }
+
     private void openPlaylistVideos(PlaylistModel playlist) {
         currentPlaylist = playlist;
         currentVideos = new ArrayList<>(playlist.getVideos());
-
-        // تنظیم TextViewهای صفحه لیست
         if (tvListTitle != null) tvListTitle.setText(playlist.getName());
         if (tvListDescription != null) tvListDescription.setText(playlist.getVideoCount() + " قسمت");
-
         setupVideoRecyclerView();
         showListPage();
     }
@@ -224,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra(VideoPlayerActivity.EXTRA_VIDEO_USERNAME, username);
                         intent.putExtra(VideoPlayerActivity.EXTRA_VIDEO_THUMBNAIL, thumbnail);
                         intent.putExtra(VideoPlayerActivity.EXTRA_VIDEO_DURATION, duration);
+                        intent.putExtra(VideoPlayerActivity.EXTRA_PLAYLIST_NAME, currentPlaylist.getName());
                         startActivity(intent);
                     }
                 });
@@ -270,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                     item.getTitle(),
                     "0",
                     item.getDuration(),
-                    item.getThumbnailUrl(),  // تغییر: آدرس تصویر از همان آدرس URL استفاده می‌شود
+                    item.getThumbnailUrl(),
                     currentPlaylist != null ? currentPlaylist.getName() : "کانال کودک",
                     "0",
                     "0"
@@ -282,26 +325,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void filterVideos(String query) {
         if (currentPlaylist == null) return;
-
         List<PlaylistModel.VideoItem> filtered = new ArrayList<>();
         if (query.isEmpty()) {
             filtered.addAll(currentPlaylist.getVideos());
         } else {
             for (PlaylistModel.VideoItem video : currentPlaylist.getVideos()) {
-                if (video.getTitle().contains(query)) {
-                    filtered.add(video);
-                }
+                if (video.getTitle().contains(query)) filtered.add(video);
             }
         }
-
-        if (videoAdapter != null) {
-            videoAdapter.updateVideos(convertToVideoModelList(filtered));
-        }
+        if (videoAdapter != null) videoAdapter.updateVideos(convertToVideoModelList(filtered));
     }
 
     private void openVideoInAparat(String videoKey) {
         Intent intent = new Intent(this, VideoPlayerActivity.class);
         intent.putExtra(VideoPlayerActivity.EXTRA_VIDEO_KEY, videoKey);
+        intent.putExtra(VideoPlayerActivity.EXTRA_PLAYLIST_NAME, currentPlaylist.getName());
 
         if (currentPlaylist != null) {
             for (PlaylistModel.VideoItem video : currentPlaylist.getVideos()) {
@@ -322,13 +360,26 @@ public class MainActivity extends AppCompatActivity {
     private void showHomePage() {
         findViewById(R.id.scrollHome).setVisibility(View.VISIBLE);
         findViewById(R.id.scrollList).setVisibility(View.GONE);
+        if (pageSearch != null) pageSearch.setVisibility(View.GONE);
         isOnHomePage = true;
+        isOnSearchPage = false;
     }
 
     private void showListPage() {
         findViewById(R.id.scrollHome).setVisibility(View.GONE);
         findViewById(R.id.scrollList).setVisibility(View.VISIBLE);
+        if (pageSearch != null) pageSearch.setVisibility(View.GONE);
         isOnHomePage = false;
+        isOnSearchPage = false;
+    }
+
+    private void showSearchPage() {
+        findViewById(R.id.scrollHome).setVisibility(View.GONE);
+        findViewById(R.id.scrollList).setVisibility(View.GONE);
+        if (pageSearch != null) pageSearch.setVisibility(View.VISIBLE);
+        isOnHomePage = false;
+        isOnSearchPage = true;
+        searchGlobalInput.requestFocus();
     }
 
     private void setupAdivery() {
@@ -340,21 +391,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadBannerAdd() {
         AdiveryBannerAdView bannerAd = findViewById(R.id.banner_ad);
-        if (bannerAd != null) {
-            bannerAd.loadAd(ADDIVERY_BANNER_ID);
-        }
+        if (bannerAd != null) bannerAd.loadAd(ADDIVERY_BANNER_ID);
     }
 
     private void addAdiveryGlobalListener() {
         Adivery.addGlobalListener(new AdiveryListener() {
-            @Override
-            public void onAppOpenAdLoaded(String placementId) {}
-            @Override
-            public void onInterstitialAdLoaded(String placementId) {}
-            @Override
-            public void onRewardedAdLoaded(String placementId) {}
-            @Override
-            public void onRewardedAdClosed(String placementId, boolean isRewarded) {
+            @Override public void onAppOpenAdLoaded(String placementId) {}
+            @Override public void onInterstitialAdLoaded(String placementId) {}
+            @Override public void onRewardedAdLoaded(String placementId) {}
+            @Override public void onRewardedAdClosed(String placementId, boolean isRewarded) {
                 if (!isRewarded) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("🎁 پیشنهاد ویژه")
@@ -368,25 +413,15 @@ public class MainActivity extends AppCompatActivity {
                     rewardedCount++;
                 }
             }
-            @Override
-            public void log(String placementId, String log) {}
+            @Override public void log(String placementId, String log) {}
         });
     }
 
     public void showVideoOpenedAdd() {
-        if (rewardedCount < 3) {
-            showRewardAdd();
-        }
+        if (rewardedCount < 3) showRewardAdd();
     }
 
     public boolean showRewardAdd() {
-       // if (Adivery.isLoaded(ADDIVERY_REWARD_ID)) {
-       //     Adivery.showAd(ADDIVERY_REWARD_ID);
-       //     return true;
-       // } else {
-       //     Adivery.prepareRewardedAd(MainActivity.this, ADDIVERY_REWARD_ID);
-       //     return false;
-       // }
         return true;
     }
 
@@ -404,7 +439,9 @@ public class MainActivity extends AppCompatActivity {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (!isOnHomePage) {
+                if (isOnSearchPage) {
+                    showHomePage();
+                } else if (!isOnHomePage) {
                     showHomePage();
                 } else {
                     finish();
@@ -412,5 +449,59 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    static class SearchResultItem {
+        private String playlistName;
+        private PlaylistModel.VideoItem video;
+        public SearchResultItem(String playlistName, PlaylistModel.VideoItem video) {
+            this.playlistName = playlistName;
+            this.video = video;
+        }
+        public String getPlaylistName() { return playlistName; }
+        public PlaylistModel.VideoItem getVideo() { return video; }
+    }
+
+    static class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
+        private List<SearchResultItem> items;
+        private OnItemClickListener listener;
+        public interface OnItemClickListener { void onItemClick(SearchResultItem item); }
+        public SearchResultAdapter(List<SearchResultItem> items, OnItemClickListener listener) {
+            this.items = items;
+            this.listener = listener;
+        }
+        @NonNull @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_result, parent, false);
+            return new ViewHolder(view);
+        }
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            SearchResultItem item = items.get(position);
+            holder.tvTitle.setText(item.getVideo().getTitle());
+            holder.tvPlaylistName.setText("📁 " + item.getPlaylistName());
+            holder.tvDuration.setText(item.getVideo().getDuration());
+            String thumbUrl = item.getVideo().getThumbnailUrl();
+            if (thumbUrl != null && !thumbUrl.isEmpty()) {
+                Glide.with(holder.itemView.getContext())
+                        .load(thumbUrl)
+                        .placeholder(R.drawable.ic_placeholder)
+                        .error(R.drawable.ic_placeholder)
+                        .into(holder.ivThumbnail);
+            }
+            holder.itemView.setOnClickListener(v -> { if (listener != null) listener.onItemClick(item); });
+        }
+        @Override public int getItemCount() { return items.size(); }
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView tvTitle, tvPlaylistName, tvDuration;
+            ImageView ivThumbnail;
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                tvTitle = itemView.findViewById(R.id.tvSearchResultTitle);
+                tvPlaylistName = itemView.findViewById(R.id.tvSearchResultPlaylist);
+                tvDuration = itemView.findViewById(R.id.tvSearchResultDuration);
+                ivThumbnail = itemView.findViewById(R.id.ivSearchResultThumb);
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     private Context context;
     private List<PlaylistModel> playlistList;
     private OnPlaylistClickListener listener;
+    private WatchHistoryManager historyManager;
 
     public interface OnPlaylistClickListener {
         void onPlaylistClick(PlaylistModel playlist);
@@ -28,6 +30,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         this.context = context;
         this.playlistList = playlistList;
         this.listener = listener;
+        this.historyManager = new WatchHistoryManager(context);
     }
 
     @NonNull
@@ -41,7 +44,26 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
         PlaylistModel playlist = playlistList.get(position);
         holder.tvTitle.setText(playlist.getName());
-        holder.tvEpisodeCount.setText(playlist.getVideoCount() + " قسمت");
+
+        int watchedCount = playlist.getWatchedCount(historyManager);
+        int totalCount = playlist.getVideoCount();
+
+        if (watchedCount == totalCount && totalCount > 0) {
+            holder.tvEpisodeCount.setText("✅ " + watchedCount + "/" + totalCount + " قسمت (تکمیل شد)");
+            holder.tvEpisodeCount.setTextColor(0xFF10B981);
+        } else if (watchedCount > 0) {
+            holder.tvEpisodeCount.setText("📺 " + watchedCount + "/" + totalCount + " قسمت دیده شده");
+            holder.tvEpisodeCount.setTextColor(0xFFE67E22);
+        } else {
+            holder.tvEpisodeCount.setText(totalCount + " قسمت");
+            holder.tvEpisodeCount.setTextColor(0xFFE67E22);
+        }
+
+        int progress = playlist.getProgressPercent(historyManager);
+        if (holder.progressBar != null) {
+            holder.progressBar.setProgress(progress);
+            holder.progressBar.setVisibility(progress > 0 ? View.VISIBLE : View.GONE);
+        }
 
         String thumbUrl = playlist.getThumbnailUrl();
         if (thumbUrl != null && !thumbUrl.isEmpty()) {
@@ -70,12 +92,14 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         ImageView ivThumbnail;
         TextView tvTitle;
         TextView tvEpisodeCount;
+        ProgressBar progressBar;
 
         public PlaylistViewHolder(@NonNull View itemView) {
             super(itemView);
             ivThumbnail = itemView.findViewById(R.id.ivPlaylistThumbnail);
             tvTitle = itemView.findViewById(R.id.tvPlaylistTitle);
             tvEpisodeCount = itemView.findViewById(R.id.tvEpisodeCount);
+            progressBar = itemView.findViewById(R.id.progressPlaylist);
         }
     }
 }

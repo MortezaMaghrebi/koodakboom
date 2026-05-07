@@ -33,6 +33,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private String viewType;
     private OnVideoClickListener listener;
     private DataManager dataManager;
+    private WatchHistoryManager historyManager;
     private int currentlyPlayingPosition = -1;
 
     public interface OnVideoClickListener {
@@ -48,6 +49,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.viewType = viewType;
         this.listener = listener;
         this.dataManager = new DataManager(context);
+        this.historyManager = new WatchHistoryManager(context);
     }
 
     public void setViewType(String viewType) {
@@ -76,44 +78,41 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         VideoModel video = videoList.get(position);
         boolean isFavorite = dataManager.isFavorite(video.getVideoKey());
+        boolean isWatched = historyManager.isVideoWatched(video.getVideoKey());
 
         if (holder instanceof InstagramViewHolder) {
             InstagramViewHolder instaHolder = (InstagramViewHolder) holder;
-            bindInstagramView(instaHolder, video, isFavorite, position);
+            bindInstagramView(instaHolder, video, isFavorite, isWatched, position);
         } else if (holder instanceof ListViewHolder) {
             ListViewHolder listHolder = (ListViewHolder) holder;
-            bindListView(listHolder, video, isFavorite);
+            bindListView(listHolder, video, isFavorite, isWatched);
         }
     }
 
-    private void bindInstagramView(InstagramViewHolder holder, VideoModel video, boolean isFavorite, int position) {
-        // تنظیم اطلاعات پایه
-        holder.username.setText(video.getUsername());
-        holder.tvTime.setText(" ");
-
-       // String likeCount = formatNumber(video.getLikes());
-        //String commentCount = formatNumber(video.getComments());
-       // String viewCount = formatNumber(video.getViews());
-
-        //holder.tvLikes.setText(likeCount);
-        //holder.tvComments.setText(commentCount);
-        holder.tvStats.setText(video.getDuration() + " ⏱️ " );
+    private void bindInstagramView(InstagramViewHolder holder, VideoModel video, boolean isFavorite, boolean isWatched, int position) {
         holder.tvCaption.setText(video.getTitle());
+        holder.tvStats.setText(video.getDuration() + " ⏱️");
+        holder.tvDuration.setText(video.getDuration());
 
         updateLikeButton(holder.btnLike, isFavorite);
 
-        // لود تصویر thumbnail - پشتیبانی از URL و فایل محلی
+        // نشان دیده شده
+        if (isWatched) {
+            holder.tvWatchedBadge.setVisibility(View.VISIBLE);
+            holder.tvWatchedBadge.setText("✓ دیده شده");
+        } else {
+            holder.tvWatchedBadge.setVisibility(View.GONE);
+        }
+
         String thumbnailUrl = video.getThumbnailName();
         if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
             if (thumbnailUrl.startsWith("http://") || thumbnailUrl.startsWith("https://")) {
-                // بارگذاری از URL
                 Glide.with(context)
                         .load(thumbnailUrl)
                         .placeholder(R.drawable.ic_placeholder)
                         .error(R.drawable.ic_placeholder)
                         .into(holder.thumbnail);
             } else {
-                // بارگذاری از فایل asset
                 Glide.with(context)
                         .load(Uri.parse("file:///android_asset/" + thumbnailUrl))
                         .placeholder(R.drawable.ic_placeholder)
@@ -124,20 +123,12 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.thumbnail.setImageResource(R.drawable.ic_placeholder);
         }
 
-        // آواتار
-        String firstChar = video.getUsername().length() > 0 ?
-                video.getUsername().substring(0, 1).toUpperCase() : "U";
-        holder.avatar.setText(firstChar);
-        holder.tvDuration.setText(video.getDuration());
-
-        // اگر این آیتم در حال پخش است، WebView را نشان بده
         if (currentlyPlayingPosition == position) {
             showWebView(holder, video);
         } else {
             hideWebView(holder);
         }
 
-        // دکمه پخش امبد (پخش در همین صفحه)
         holder.btnPlay.setOnClickListener(v -> {
             if (currentlyPlayingPosition == position) {
                 stopVideo(holder);
@@ -152,42 +143,8 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         });
 
-        // دکمه تمام صفحه (باز کردن در VideoPlayerActivity)
-        holder.btnOpenFullscreen.setOnClickListener(v -> {
-            if (listener != null) {
-                stopVideo(holder);
-                currentlyPlayingPosition = -1;
-                listener.onVideoFullscreen(
-                        video.getVideoKey(),
-                        video.getTitle(),
-                        video.getViews(),
-                        video.getLikes(),
-                        video.getUsername(),
-                        video.getThumbnailName(),
-                        video.getDuration()
-                );
-            }
-        });
-
-        // کلیک روی لایک
         holder.btnLike.setOnClickListener(v -> {
             toggleFavorite(video, holder);
-        });
-
-        // کلیک روی آواتار (باز کردن صفحه کانال)
-        holder.avatar.setOnClickListener(v -> {
-            Toast.makeText(context, "👤 کانال: " + video.getUsername(), Toast.LENGTH_SHORT).show();
-        });
-
-        holder.username.setOnClickListener(v -> {
-            Toast.makeText(context, "👤 کانال: " + video.getUsername(), Toast.LENGTH_SHORT).show();
-        });
-
-
-
-        // کلیک روی اشتراک
-        holder.btnShare.setOnClickListener(v -> {
-            shareVideo(video);
         });
 
         holder.thumbnail.setOnClickListener(v -> {
@@ -273,22 +230,26 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         hideWebView(holder);
     }
 
-    private void bindListView(ListViewHolder holder, VideoModel video, boolean isFavorite) {
+    private void bindListView(ListViewHolder holder, VideoModel video, boolean isFavorite, boolean isWatched) {
         holder.title.setText(video.getTitle());
-        holder.details.setText("👤 " + video.getUsername() + " · 👁️ " + formatNumber(video.getViews()) + " · ⏱️ " + video.getDuration());
+        holder.details.setText("👤 " + video.getUsername() + " · ⏱️ " + video.getDuration());
 
-        // لود تصویر thumbnail - پشتیبانی از URL و فایل محلی
+        if (isWatched) {
+            holder.tvWatchedBadge.setVisibility(View.VISIBLE);
+            holder.tvWatchedBadge.setText("✓ دیده شده");
+        } else {
+            holder.tvWatchedBadge.setVisibility(View.GONE);
+        }
+
         String thumbnailUrl = video.getThumbnailName();
         if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
             if (thumbnailUrl.startsWith("http://") || thumbnailUrl.startsWith("https://")) {
-                // بارگذاری از URL
                 Glide.with(context)
                         .load(thumbnailUrl)
                         .placeholder(R.drawable.ic_placeholder)
                         .error(R.drawable.ic_placeholder)
                         .into(holder.thumbnail);
             } else {
-                // بارگذاری از فایل asset
                 Glide.with(context)
                         .load(Uri.parse("file:///android_asset/" + thumbnailUrl))
                         .placeholder(R.drawable.ic_placeholder)
@@ -369,16 +330,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    private void shareVideo(VideoModel video) {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT,
-                "🎬 " + video.getTitle() + "\n" +
-                        "📺 تماشا در آپارات:\n" +
-                        "https://www.aparat.com/v/" + video.getVideoKey());
-        context.startActivity(Intent.createChooser(shareIntent, "اشتراک‌گذاری ویدیو"));
-    }
-
     @Override
     public int getItemCount() {
         return videoList.size();
@@ -390,27 +341,21 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     static class InstagramViewHolder extends RecyclerView.ViewHolder {
-        TextView username, tvTime, tvStats, tvCaption, avatar, tvDuration;
-        ImageView thumbnail, btnLike, btnComment, btnShare, btnPlay, btnOpenFullscreen;
+        TextView tvCaption, tvStats, tvDuration, tvWatchedBadge;
+        ImageView thumbnail, btnLike, btnPlay;
         WebView webView;
         ProgressBar progressBar;
         FrameLayout videoContainer;
 
         public InstagramViewHolder(@NonNull View itemView) {
             super(itemView);
-            username = itemView.findViewById(R.id.tvUsername);
-            tvTime = itemView.findViewById(R.id.tvTime);
-            //tvLikes = itemView.findViewById(R.id.tvLikes);
-            //tvComments = itemView.findViewById(R.id.tvComments);
-            tvStats = itemView.findViewById(R.id.tvStats);
             tvCaption = itemView.findViewById(R.id.tvCaption);
-            avatar = itemView.findViewById(R.id.tvAvatar);
-            thumbnail = itemView.findViewById(R.id.ivThumbnail);
+            tvStats = itemView.findViewById(R.id.tvStats);
             tvDuration = itemView.findViewById(R.id.tvDuration);
+            tvWatchedBadge = itemView.findViewById(R.id.tvWatchedBadge);
+            thumbnail = itemView.findViewById(R.id.ivThumbnail);
             btnLike = itemView.findViewById(R.id.ivLike);
-             btnShare = itemView.findViewById(R.id.ivShare);
             btnPlay = itemView.findViewById(R.id.btnPlayVideo);
-            btnOpenFullscreen = itemView.findViewById(R.id.btnOpenFullscreen);
             webView = itemView.findViewById(R.id.webViewPlayer);
             progressBar = itemView.findViewById(R.id.progressBarVideo);
             videoContainer = itemView.findViewById(R.id.videoContainer);
@@ -418,16 +363,17 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     static class ListViewHolder extends RecyclerView.ViewHolder {
-        TextView title, details, tvLikeCount;
+        TextView title, details, tvLikeCount, tvWatchedBadge;
         ImageView thumbnail, btnLike;
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.tvTitle);
             details = itemView.findViewById(R.id.tvDetails);
+            tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
+            tvWatchedBadge = itemView.findViewById(R.id.tvWatchedBadge);
             thumbnail = itemView.findViewById(R.id.ivThumb);
             btnLike = itemView.findViewById(R.id.ivLike);
-            tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
         }
     }
 }

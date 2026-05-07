@@ -38,15 +38,15 @@ public class VideoPlayerActivity extends AppCompatActivity {
     public static final String EXTRA_VIDEO_USERNAME = "video_username";
     public static final String EXTRA_VIDEO_THUMBNAIL = "video_thumbnail";
     public static final String EXTRA_VIDEO_DURATION = "video_duration";
+    public static final String EXTRA_PLAYLIST_NAME = "playlist_name";
 
     private WebView webView;
     private TextView tvTitle, tvUsername, tvViews, tvLikes, tvLoadingText;
-    private ImageView btnBack , btnRefresh, ivAvatar;
-    private TextView btnShare, btnLike, btnDownload;  // تغییر به TextView
+    private ImageView btnBack, btnRefresh, ivAvatar;
+    private TextView btnShare, btnLike, btnDownload;
     private ProgressBar progressBar;
     private FrameLayout fullscreenContainer;
     private CardView headerCard, infoCard;
-    private LinearLayout commentsSection;
     private RecyclerView commentsRecyclerView;
     private EditText etNewComment;
     private Button btnSendComment;
@@ -56,7 +56,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private DataManager dataManager;
     private CommentsAdapter commentsAdapter;
+    private WatchHistoryManager historyManager;
     private String videoKey, videoTitle, videoViews, videoLikes, videoUsername, videoThumbnail, videoDuration;
+    private String playlistName;
     private boolean isFavorite = false;
     private boolean isFullscreen = false;
     private int originalOrientation;
@@ -67,6 +69,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_player);
 
         dataManager = new DataManager(this);
+        historyManager = new WatchHistoryManager(this);
         initViews();
         getIntentData();
         setupListeners();
@@ -76,7 +79,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         checkFavoriteStatus();
         loadComments();
 
-        // Add callback to handle back button/gesture
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -89,11 +91,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 } else if (webView.canGoBack()) {
                     webView.goBack();
                 } else {
-                   VideoPlayerActivity.this.finish();
+                    VideoPlayerActivity.this.finish();
                 }
             }
         };
-        // Register the callback
         getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
@@ -113,10 +114,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         headerCard = findViewById(R.id.headerCard);
         infoCard = findViewById(R.id.infoCard);
 
-        // پیدا کردن TextViewها برای دکمه‌های اکشن
         LinearLayout actionButtonsLayout = findViewById(R.id.actionButtonsLayout);
         if (actionButtonsLayout != null) {
-            // پیدا کردن دکمه‌ها توسط ترتیب یا text
             for (int i = 0; i < actionButtonsLayout.getChildCount(); i++) {
                 View child = actionButtonsLayout.getChildAt(i);
                 if (child instanceof TextView) {
@@ -133,7 +132,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             }
         }
 
-        // بخش نظرات
         commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
         etNewComment = findViewById(R.id.etNewComment);
         btnSendComment = findViewById(R.id.btnSendComment);
@@ -150,11 +148,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
         videoUsername = getIntent().getStringExtra(EXTRA_VIDEO_USERNAME);
         videoThumbnail = getIntent().getStringExtra(EXTRA_VIDEO_THUMBNAIL);
         videoDuration = getIntent().getStringExtra(EXTRA_VIDEO_DURATION);
+        playlistName = getIntent().getStringExtra(EXTRA_PLAYLIST_NAME);
 
-        // مقادیر پیش‌فرض
-        if (videoUsername == null) videoUsername = "کانال ورزشی";
+        if (videoUsername == null) videoUsername = "کانال کودک";
         if (videoViews == null) videoViews = "0";
         if (videoLikes == null) videoLikes = "0";
+        if (playlistName == null) playlistName = "";
     }
 
     private void showVideoInfo() {
@@ -163,10 +162,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         if (videoViews != null) tvViews.setText("👁️ " + videoViews);
         if (videoLikes != null) tvLikes.setText("❤️ " + videoLikes);
 
-        // آواتار
         if (videoUsername != null && !videoUsername.isEmpty()) {
-            String firstChar = String.valueOf(videoUsername.charAt(0)).toUpperCase();
-            // برای ImageView نمی‌توانیم متن بگذاریم، از Glide استفاده می‌کنیم یا یک placeholder ساده
             ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
         }
     }
@@ -206,9 +202,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
-
         btnShare.setOnClickListener(v -> shareVideo());
-
         btnRefresh.setOnClickListener(v -> {
             webView.reload();
             progressBar.setVisibility(View.VISIBLE);
@@ -219,8 +213,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             btnLike.setOnClickListener(v -> toggleFavorite());
         }
 
-
-
         if (btnDownload != null) {
             btnDownload.setOnClickListener(v -> downloadVideo());
         }
@@ -230,25 +222,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
     }
 
-
-
-    private void scrollToComments() {
-        // اسکرول به بخش نظرات
-        View commentsCard = findViewById(R.id.commentsCard);
-        if (commentsCard != null) {
-            commentsCard.requestFocus();
-            commentsCard.post(() -> {
-                // می‌توانید اسکرول خودکار اضافه کنید
-                Toast.makeText(this, "💬 بخش نظرات", Toast.LENGTH_SHORT).show();
-            });
-        }
-    }
-
     private void shareVideo() {
         String shareText = "🎬 " + videoTitle + "\n" +
                 "📺 تماشا در آپارات:\n" +
                 "https://www.aparat.com/v/" + videoKey;
-
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
@@ -265,7 +242,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     videoUsername, videoViews, videoDuration
             );
             dataManager.addToFavorites(favorite);
-            //Toast.makeText(this, "❤️ به علاقه‌مندی‌ها اضافه شد", Toast.LENGTH_SHORT).show();
         }
         isFavorite = !isFavorite;
         updateLikeButton();
@@ -273,20 +249,16 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private void addComment() {
         if (etNewComment == null) return;
-
         String comment = etNewComment.getText().toString().trim();
         if (comment.isEmpty()) {
             Toast.makeText(this, "لطفاً نظر خود را بنویسید", Toast.LENGTH_SHORT).show();
             return;
         }
-
         String username = videoUsername != null ? videoUsername : "کاربر";
         dataManager.addComment(videoKey, comment, username);
         etNewComment.setText("");
         loadComments();
         Toast.makeText(this, "💬 نظر شما ثبت شد", Toast.LENGTH_SHORT).show();
-
-        // اسکرول به بالای نظرات
         if (commentsRecyclerView != null) {
             commentsRecyclerView.smoothScrollToPosition(0);
         }
@@ -300,10 +272,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("دانلود ویدیو")
                 .setMessage("آیا می‌خواهید این ویدیو را در آپارات مشاهده و دانلود کنید؟\n" + videoTitle)
-                .setPositiveButton("باز کردن آپارات", (dialog, which) -> {
-                    //Toast.makeText(this, "⏳ شروع دانلود...\n(لینک دانلود در مرورگر باز می‌شود)", Toast.LENGTH_LONG).show();
-                    openInBrowser();
-                })
+                .setPositiveButton("باز کردن آپارات", (dialog, which) -> openInBrowser())
                 .setNegativeButton("انصراف", null)
                 .show();
     }
@@ -312,6 +281,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
         String url = "https://www.aparat.com/v/" + videoKey;
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
+    }
+
+    private void markVideoAsWatched() {
+        historyManager.markVideoAsWatched(videoKey);
+        if (playlistName != null && !playlistName.isEmpty()) {
+            historyManager.markEpisodeAsWatched(playlistName, videoKey);
+        }
     }
 
     private void setupWebView() {
@@ -333,6 +309,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (tvLoadingText != null) tvLoadingText.setVisibility(View.GONE);
+                markVideoAsWatched();
             }
 
             @Override
@@ -353,7 +330,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     callback.onCustomViewHidden();
                     return;
                 }
-
                 originalOrientation = getRequestedOrientation();
                 customView = view;
                 customViewCallback = callback;
@@ -373,24 +349,16 @@ public class VideoPlayerActivity extends AppCompatActivity {
             @Override
             public void onHideCustomView() {
                 if (customView == null) return;
-
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
                 if (headerCard != null) headerCard.setVisibility(View.VISIBLE);
                 if (infoCard != null) infoCard.setVisibility(View.VISIBLE);
-
-                if (customView != null) {
-                    customView.setVisibility(View.GONE);
-                }
+                if (customView != null) customView.setVisibility(View.GONE);
                 if (fullscreenContainer != null) {
                     fullscreenContainer.removeView(customView);
                     fullscreenContainer.setVisibility(View.GONE);
                 }
                 webView.setVisibility(View.VISIBLE);
-
-                if (customViewCallback != null) {
-                    customViewCallback.onCustomViewHidden();
-                }
+                if (customViewCallback != null) customViewCallback.onCustomViewHidden();
                 customView = null;
                 customViewCallback = null;
                 isFullscreen = false;
@@ -429,11 +397,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         webView.loadDataWithBaseURL("https://www.aparat.com/", html, "text/html", "UTF-8", null);
     }
 
-
- //  public void onBackPressed() {
-
- //  }
-
     @Override
     protected void onDestroy() {
         if (webView != null) {
@@ -442,6 +405,4 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
-
-
 }
