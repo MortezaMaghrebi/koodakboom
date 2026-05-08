@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initViews();
+        ShowListMode();
         loadPlaylistsFromAssets();
         setupHomePage();
         setupListPage();
@@ -285,24 +286,34 @@ public class MainActivity extends AppCompatActivity {
         });
 
         toggleGrid.setOnClickListener(v -> {
-            currentView = "instagram";
-            toggleGrid.setBackgroundResource(R.drawable.toggle_active_bg);
-            toggleGrid.setTextColor(Color.WHITE);
-            toggleList.setBackgroundResource(R.drawable.toggle_inactive_bg);
-            toggleList.setTextColor(Color.BLACK);
-            if (videoAdapter != null) videoAdapter.setViewType(currentView);
-        });
+            ShowInstagramMode();
+         });
 
         toggleList.setOnClickListener(v -> {
-            currentView = "list";
-            toggleList.setBackgroundResource(R.drawable.toggle_active_bg);
-            toggleList.setTextColor(Color.WHITE);
-            toggleGrid.setBackgroundResource(R.drawable.toggle_inactive_bg);
-            toggleGrid.setTextColor(Color.BLACK);
-            if (videoAdapter != null) videoAdapter.setViewType(currentView);
+            ShowListMode();
         });
     }
 
+    void ShowListMode()
+    {
+        currentView = "list";
+        toggleList.setBackgroundResource(R.drawable.toggle_active_bg);
+        toggleList.setTextColor(Color.WHITE);
+        toggleGrid.setBackgroundResource(R.drawable.toggle_inactive_bg);
+        toggleGrid.setTextColor(Color.BLACK);
+        if (videoAdapter != null) videoAdapter.setViewType(currentView);
+    }
+
+    void ShowInstagramMode()
+    {
+        currentView = "instagram";
+        toggleGrid.setBackgroundResource(R.drawable.toggle_active_bg);
+        toggleGrid.setTextColor(Color.WHITE);
+        toggleList.setBackgroundResource(R.drawable.toggle_inactive_bg);
+        toggleList.setTextColor(Color.BLACK);
+        if (videoAdapter != null) videoAdapter.setViewType(currentView);
+
+    }
     private List<VideoModel> convertToVideoModelList(List<PlaylistModel.VideoItem> videoItems) {
         List<VideoModel> videoModels = new ArrayList<>();
         for (int i = 0; i < videoItems.size(); i++) {
@@ -394,6 +405,7 @@ public class MainActivity extends AppCompatActivity {
         if (bannerAd != null) bannerAd.loadAd(ADDIVERY_BANNER_ID);
     }
 
+    boolean addAlertShown=false;
     private void addAdiveryGlobalListener() {
         Adivery.addGlobalListener(new AdiveryListener() {
             @Override public void onAppOpenAdLoaded(String placementId) {}
@@ -401,14 +413,19 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onRewardedAdLoaded(String placementId) {}
             @Override public void onRewardedAdClosed(String placementId, boolean isRewarded) {
                 if (!isRewarded) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("🎁 پیشنهاد ویژه")
-                            .setMessage("اگر سه بار تبلیغ رو تا آخر ببینی، دیگه تبلیغی بهت نشون داده نمیشه! 🙌\n\nلطفاً تبلیغ رو نبند و تا انتها تماشا کن.")
-                            .setCancelable(false)
-                            .setPositiveButton("👀 باشه، کامل می‌بینم", (dialog, which) -> {})
-                            .setNegativeButton("❌ می‌بندمش", null)
-                            .setIcon(android.R.drawable.ic_dialog_info)
-                            .show();
+                    if(!addAlertShown) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("🎁 پیشنهاد ویژه")
+                                .setMessage("اگر سه بار تبلیغ رو تا آخر ببینی، دیگه تبلیغی بهت نشون داده نمیشه! 🙌\n\nلطفاً تبلیغ رو نبند و تا انتها تماشا کن.")
+                                .setCancelable(false)
+                                .setPositiveButton("👀 باشه، کامل می‌بینم", (dialog, which) -> {
+                                })
+                                .setNegativeButton("دیگه نشون نده",  (dialog, which) -> {
+                                    addAlertShown=true;
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_info)
+                                .show();
+                    }
                 } else {
                     rewardedCount++;
                 }
@@ -422,7 +439,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean showRewardAdd() {
-        return true;
+        if (rewardedCount < 3) {
+            if (Adivery.isLoaded(ADDIVERY_REWARD_ID)) {
+                Adivery.showAd(ADDIVERY_REWARD_ID);
+                return true;
+            } else {
+                Adivery.prepareRewardedAd(MainActivity.this, ADDIVERY_REWARD_ID);
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean showOpenAdd() {
