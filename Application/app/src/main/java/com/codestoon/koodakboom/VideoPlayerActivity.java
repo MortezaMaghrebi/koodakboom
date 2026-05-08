@@ -1,10 +1,13 @@
 package com.codestoon.koodakboom;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -26,8 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
-import android.view.WindowManager;
+import android.view.ViewGroup;
 
 public class VideoPlayerActivity extends AppCompatActivity {
 
@@ -46,7 +48,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private TextView btnShare, btnLike, btnDownload;
     private ProgressBar progressBar;
     private FrameLayout fullscreenContainer;
-    private CardView headerCard, infoCard;
+    private CardView headerCard, infoCard, commentsCard;
     private RecyclerView commentsRecyclerView;
     private EditText etNewComment;
     private Button btnSendComment;
@@ -83,11 +85,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 if (isFullscreen && customView != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        if (webView.getWebChromeClient() != null) {
-                            webView.getWebChromeClient().onHideCustomView();
-                        }
-                    }
+                    exitFullscreen();
                 } else if (webView.canGoBack()) {
                     webView.goBack();
                 } else {
@@ -113,6 +111,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         fullscreenContainer = findViewById(R.id.fullscreenContainer);
         headerCard = findViewById(R.id.headerCard);
         infoCard = findViewById(R.id.infoCard);
+        commentsCard = findViewById(R.id.commentsCard);
 
         LinearLayout actionButtonsLayout = findViewById(R.id.actionButtonsLayout);
         if (actionButtonsLayout != null) {
@@ -121,7 +120,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 if (child instanceof TextView) {
                     TextView textView = (TextView) child;
                     String buttonText = textView.getText().toString();
-                    if (buttonText.equals("نظر")) {
+                    if (buttonText.equals("اشتراک")) {
                         btnShare = textView;
                     } else if (buttonText.equals("پسندیدن")) {
                         btnLike = textView;
@@ -242,6 +241,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     videoUsername, videoViews, videoDuration
             );
             dataManager.addToFavorites(favorite);
+            Toast.makeText(this, "❤️ به علاقه‌مندی‌ها اضافه شد", Toast.LENGTH_SHORT).show();
         }
         isFavorite = !isFavorite;
         updateLikeButton();
@@ -290,6 +290,43 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
     }
 
+    private void enterFullscreen() {
+        isFullscreen = true;
+        // مخفی کردن هدر و اطلاعات
+        if (headerCard != null) headerCard.setVisibility(View.GONE);
+        if (infoCard != null) infoCard.setVisibility(View.GONE);
+        if (commentsCard != null) commentsCard.setVisibility(View.GONE);
+        // مخفی کردن نوار وضعیت
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // تغییر جهت صفحه به Landscape
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+    }
+
+    private void exitFullscreen() {
+        isFullscreen = false;
+        // نمایش مجدد هدر و اطلاعات
+        if (headerCard != null) headerCard.setVisibility(View.VISIBLE);
+        if (infoCard != null) infoCard.setVisibility(View.VISIBLE);
+        if (commentsCard != null) commentsCard.setVisibility(View.VISIBLE);
+        // نمایش مجدد نوار وضعیت
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // برگرداندن جهت صفحه به Portrait
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        // حذف customView از fullscreenContainer
+        if (fullscreenContainer != null && customView != null) {
+            fullscreenContainer.removeView(customView);
+            fullscreenContainer.setVisibility(View.GONE);
+        }
+
+        if (customViewCallback != null) {
+            customViewCallback.onCustomViewHidden();
+        }
+        customView = null;
+        customViewCallback = null;
+        webView.setVisibility(View.VISIBLE);
+    }
+
     private void setupWebView() {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -298,6 +335,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setDisplayZoomControls(false);
+        webSettings.setSupportZoom(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
@@ -330,38 +368,33 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     callback.onCustomViewHidden();
                     return;
                 }
-                originalOrientation = getRequestedOrientation();
+
                 customView = view;
                 customViewCallback = callback;
-                isFullscreen = true;
 
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                if (headerCard != null) headerCard.setVisibility(View.GONE);
-                if (infoCard != null) infoCard.setVisibility(View.GONE);
-
+                // اضافه کردن view به fullscreenContainer
                 if (fullscreenContainer != null) {
-                    fullscreenContainer.addView(customView);
                     fullscreenContainer.setVisibility(View.VISIBLE);
+                    fullscreenContainer.addView(customView, new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                    ));
                 }
+
                 webView.setVisibility(View.GONE);
+
+                // ورود به حالت تمام صفحه
+                enterFullscreen();
             }
 
             @Override
             public void onHideCustomView() {
                 if (customView == null) return;
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                if (headerCard != null) headerCard.setVisibility(View.VISIBLE);
-                if (infoCard != null) infoCard.setVisibility(View.VISIBLE);
-                if (customView != null) customView.setVisibility(View.GONE);
-                if (fullscreenContainer != null) {
-                    fullscreenContainer.removeView(customView);
-                    fullscreenContainer.setVisibility(View.GONE);
-                }
+
+                // خروج از حالت تمام صفحه
+                exitFullscreen();
+
                 webView.setVisibility(View.VISIBLE);
-                if (customViewCallback != null) customViewCallback.onCustomViewHidden();
-                customView = null;
-                customViewCallback = null;
-                isFullscreen = false;
             }
         });
     }

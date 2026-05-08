@@ -1,5 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
+    <style name="Theme.KoodakBoom" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#E67E22</item>
+        <item name="colorPrimaryVariant">#B85C00</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#D9534F</item>
+        <item name="colorSecondaryVariant">#A94442</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+    <!-- Base application theme. -->
     <style name="Base.Theme.ClipChin" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->

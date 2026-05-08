@@ -135,17 +135,30 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         holder.btnPlay.setOnClickListener(v -> {
-            if (currentlyPlayingPosition == position) {
+            if (listener != null) {
                 stopVideo(holder);
                 currentlyPlayingPosition = -1;
-            } else {
-                if (currentlyPlayingPosition != -1) {
-                    notifyItemChanged(currentlyPlayingPosition);
-                }
-                currentlyPlayingPosition = position;
-                mainActivity.showVideoOpenedAdd();
-                showWebView(holder, video);
+                listener.onVideoFullscreen(
+                        video.getVideoKey(),
+                        video.getTitle(),
+                        video.getViews(),
+                        video.getLikes(),
+                        video.getUsername(),
+                        video.getThumbnailName(),
+                        video.getDuration()
+                );
             }
+            //if (currentlyPlayingPosition == position) {
+            //    stopVideo(holder);
+            //    currentlyPlayingPosition = -1;
+            //} else {
+            //    if (currentlyPlayingPosition != -1) {
+            //        notifyItemChanged(currentlyPlayingPosition);
+            //    }
+            //    currentlyPlayingPosition = position;
+            //    mainActivity.showVideoOpenedAdd();
+            //    showWebView(holder, video);
+            //}
         });
 
         holder.btnLike.setOnClickListener(v -> {
