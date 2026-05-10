@@ -260,7 +260,7 @@
                 <TextView android:fontFamily="@font/yekan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💬 نظرات کاربران"
+                    android:text="💬 نظرات شما"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold"

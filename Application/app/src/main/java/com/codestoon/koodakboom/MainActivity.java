@@ -1,6 +1,7 @@
 package com.codestoon.koodakboom;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout pageSearch;
     private LinearLayout btnBackFromSearch;
 
+    private WatchHistoryManager historyManager;
+
     @Override
     protected void onPause() {
         lastPauseTime = System.currentTimeMillis();
@@ -66,17 +69,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
         long pauseTime = System.currentTimeMillis() - lastPauseTime;
         if (pauseTime > TimeUnit.SECONDS.toMillis(10)) {
             // showOpenAdd();
         }
-        super.onResume();
+        // به روز رسانی Hero با آخرین سریال تماشا شده
+        if (!isOnHomePage) {
+            updateHeroWithLastWatched();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        historyManager = new WatchHistoryManager(this);  // اضافه کنید
 
         initViews();
         ShowListMode();
@@ -118,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "هیچ سریالی یافت نشد", Toast.LENGTH_SHORT).show();
             addDemoPlaylists();
         }
+        // مرتب‌سازی لیست بر اساس حروف الفبا (بر اساس نام سریال)
+        allPlaylists.sort((a, b) -> a.getName().compareTo(b.getName()));
 
         if (tvPlaylistCount != null) {
             tvPlaylistCount.setText(allPlaylists.size() + " مجموعه");
@@ -137,7 +148,87 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void ShowLastShownSerial()
+    {
+        // پیدا کردن آخرین سریال تماشا شده و باز کردن آن
+        String lastPlaylistName = getLastWatchedPlaylist();
+        if (!lastPlaylistName.isEmpty()) {
+            for (PlaylistModel playlist : allPlaylists) {
+                if (playlist.getName().equals(lastPlaylistName)) {
+                    openPlaylistVideos(playlist);
+                    return;
+                }
+            }
+
+
+        }
+        // اگر موردی نبود، اولین سریال را باز کن
+        if (!allPlaylists.isEmpty()) openPlaylistVideos(allPlaylists.get(0));
+
+    }
     private void setupHomePage() {
+        // نمایش آخرین سریال تماشا شده به جای اولین سریال
+        updateHeroWithLastWatched();
+
+        playHeroBtn.setOnClickListener(v -> {
+            ShowLastShownSerial();
+                    });
+
+        ivHeroImage.setOnClickListener(v ->{
+            ShowLastShownSerial();
+        });
+        homeSearchBtn.setOnClickListener(v -> showSearchPage());
+
+
+
+        playlistAdapter = new PlaylistAdapter(this, allPlaylists, playlist -> openPlaylistVideos(playlist));
+        rvPlaylists.setLayoutManager(new LinearLayoutManager(this));
+        rvPlaylists.setAdapter(playlistAdapter);
+
+        findViewById(R.id.showVideosBtn).setOnClickListener(v -> {
+            ShowLastShownSerial();
+        });
+
+        findViewById(R.id.commentMainBtn).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CommentActivity.class);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.otherAppsBtn).setOnClickListener(v -> com.codestoon.koodakboom.StoreIntents.openDeveloperPage(MainActivity.this));
+    }
+
+
+
+    private void updateHeroWithLastWatched() {
+        String lastPlaylistName = getLastWatchedPlaylist();
+        String lastVideoKey = getLastWatchedVideoKey();
+
+        if (!lastPlaylistName.isEmpty()) {
+            // پیدا کردن آخرین سریال تماشا شده
+            for (PlaylistModel playlist : allPlaylists) {
+                if (playlist.getName().equals(lastPlaylistName)) {
+                    String thumbUrl = playlist.getThumbnailUrl();
+                    if (thumbUrl != null && !thumbUrl.isEmpty()) {
+                        Glide.with(this)
+                                .load(thumbUrl)
+                                .placeholder(R.drawable.titleimage)
+                                .error(R.drawable.titleimage)
+                                .into(ivHeroImage);
+                    }
+                    if (tvHeroTitle != null) tvHeroTitle.setText(playlist.getName());
+
+                    // نمایش پیشرفت
+                    int watchedCount = playlist.getWatchedCount(historyManager);
+                    int totalCount = playlist.getVideoCount();
+                    if (tvHeroDescription != null) {
+                        tvHeroDescription.setText(watchedCount + "/" + totalCount + " قسمت دیده شده");
+                    }
+                    return;
+                }
+            }
+        }
+
+        // اگر آخرین سریالی وجود نداشت، اولین سریال را نشان بده
         if (!allPlaylists.isEmpty()) {
             String thumbUrl = allPlaylists.get(0).getThumbnailUrl();
             if (thumbUrl != null && !thumbUrl.isEmpty()) {
@@ -150,27 +241,24 @@ public class MainActivity extends AppCompatActivity {
             if (tvHeroTitle != null) tvHeroTitle.setText(allPlaylists.get(0).getName());
             if (tvHeroDescription != null) tvHeroDescription.setText(allPlaylists.get(0).getVideoCount() + " قسمت");
         }
+    }
 
-        playHeroBtn.setOnClickListener(v -> {
-            if (!allPlaylists.isEmpty()) openPlaylistVideos(allPlaylists.get(0));
-        });
+    private String getLastWatchedPlaylist() {
+        SharedPreferences prefs = getSharedPreferences("KoodakBoomPrefs", MODE_PRIVATE);
+        return prefs.getString("last_watched_playlist", "");
+    }
 
-        homeSearchBtn.setOnClickListener(v -> showSearchPage());
+    private String getLastWatchedVideoKey() {
+        SharedPreferences prefs = getSharedPreferences("KoodakBoomPrefs", MODE_PRIVATE);
+        return prefs.getString("last_watched_video_key", "");
+    }
 
-        playlistAdapter = new PlaylistAdapter(this, allPlaylists, playlist -> openPlaylistVideos(playlist));
-        rvPlaylists.setLayoutManager(new LinearLayoutManager(this));
-        rvPlaylists.setAdapter(playlistAdapter);
-
-        findViewById(R.id.showVideosBtn).setOnClickListener(v -> {
-            if (!allPlaylists.isEmpty()) openPlaylistVideos(allPlaylists.get(0));
-        });
-
-        findViewById(R.id.commentMainBtn).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CommentActivity.class);
-            startActivity(intent);
-        });
-
-        findViewById(R.id.otherAppsBtn).setOnClickListener(v -> com.codestoon.koodakboom.StoreIntents.openDeveloperPage(MainActivity.this));
+    public void saveLastWatchedVideo(String playlistName, String videoKey) {
+        SharedPreferences prefs = getSharedPreferences("KoodakBoomPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("last_watched_playlist", playlistName);
+        editor.putString("last_watched_video_key", videoKey);
+        editor.apply();
     }
 
     private void setupSearchPage() {
@@ -439,16 +527,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean showRewardAdd() {
-        if (rewardedCount < 3) {
-            if (Adivery.isLoaded(ADDIVERY_REWARD_ID)) {
-                Adivery.showAd(ADDIVERY_REWARD_ID);
-                return true;
-            } else {
-                Adivery.prepareRewardedAd(MainActivity.this, ADDIVERY_REWARD_ID);
-                return false;
-            }
-        }
-        return false;
+        //if (rewardedCount < 3) {
+        //    if (Adivery.isLoaded(ADDIVERY_REWARD_ID)) {
+        //        Adivery.showAd(ADDIVERY_REWARD_ID);
+        //        return true;
+        //    } else {
+        //        Adivery.prepareRewardedAd(MainActivity.this, ADDIVERY_REWARD_ID);
+        //        return false;
+        //    }
+        //}
+        //return false;
+        return true;
     }
 
     public boolean showOpenAdd() {

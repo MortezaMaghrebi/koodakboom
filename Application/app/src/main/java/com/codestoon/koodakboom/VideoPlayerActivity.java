@@ -1,6 +1,7 @@
 package com.codestoon.koodakboom;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -254,7 +255,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             Toast.makeText(this, "لطفاً نظر خود را بنویسید", Toast.LENGTH_SHORT).show();
             return;
         }
-        String username = videoUsername != null ? videoUsername : "کاربر";
+        String username ="شما";// videoUsername != null ? videoUsername : "کاربر";
         dataManager.addComment(videoKey, comment, username);
         etNewComment.setText("");
         loadComments();
@@ -287,6 +288,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
         historyManager.markVideoAsWatched(videoKey);
         if (playlistName != null && !playlistName.isEmpty()) {
             historyManager.markEpisodeAsWatched(playlistName, videoKey);
+
+            // ذخیره آخرین سریال تماشا شده در SharedPreferences
+            SharedPreferences prefs = getSharedPreferences("KoodakBoomPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("last_watched_playlist", playlistName);
+            editor.putString("last_watched_video_key", videoKey);
+            editor.apply();
         }
     }
 

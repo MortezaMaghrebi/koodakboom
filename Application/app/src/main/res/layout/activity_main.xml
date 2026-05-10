@@ -203,7 +203,7 @@
 
                     <TextView
                         android:fontFamily="@font/yekan"
-                        android:text="تمامی ویدیوها"
+                        android:text="ادامه تماشا"
                         android:textSize="15sp"
                         android:textColor="#1e293b"
                         android:layout_marginTop="4dp"
