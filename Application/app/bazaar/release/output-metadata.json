@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.codestoon.kuromimelody",
+  "applicationId": "com.codestoon.koodakboom",
   "variantName": "bazaarRelease",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 1,
-      "versionName": "1.0-bazaar",
+      "versionCode": 2,
+      "versionName": "1.1-bazaar",
       "outputFile": "app-bazaar-release.apk"
     }
   ],

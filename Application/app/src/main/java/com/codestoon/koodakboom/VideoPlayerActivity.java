@@ -252,14 +252,14 @@ public class VideoPlayerActivity extends AppCompatActivity {
         if (etNewComment == null) return;
         String comment = etNewComment.getText().toString().trim();
         if (comment.isEmpty()) {
-            Toast.makeText(this, "لطفاً نظر خود را بنویسید", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "لطفاً یادداشت خود را بنویسید", Toast.LENGTH_SHORT).show();
             return;
         }
         String username ="شما";// videoUsername != null ? videoUsername : "کاربر";
         dataManager.addComment(videoKey, comment, username);
         etNewComment.setText("");
         loadComments();
-        Toast.makeText(this, "💬 نظر شما ثبت شد", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "💬 یادداشت شما ثبت شد", Toast.LENGTH_SHORT).show();
         if (commentsRecyclerView != null) {
             commentsRecyclerView.smoothScrollToPosition(0);
         }
@@ -296,6 +296,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
             editor.putString("last_watched_video_key", videoKey);
             editor.apply();
         }
+        // بعد از کدهای موجود
+        ReviewPromptManager reviewManager = new ReviewPromptManager(this);
+        reviewManager.incrementAndCheck();
     }
 
     private void enterFullscreen() {

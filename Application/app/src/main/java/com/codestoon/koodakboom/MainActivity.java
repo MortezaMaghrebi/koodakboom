@@ -1,14 +1,18 @@
 package com.codestoon.koodakboom;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,13 +30,21 @@ import com.adivery.sdk.Adivery;
 import com.adivery.sdk.AdiveryBannerAdView;
 import com.adivery.sdk.AdiveryListener;
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+    // در ابتدای کلاس MainActivity، متغیر جدید اضافه کنید
+    private BillingManager billingManager;
 
+    // در متد onCreate، بعد از initViews() اضافه کنید
+    private void initBilling() {
+        billingManager = BillingManager.getInstance(this);
+        billingManager.initializeBilling();
+    }
     final String ADDIVERY_APP_ID = "779dbd87-6ba4-4cdd-9868-a3f0018af0f6";
     final String ADDIVERY_REWARD_ID = "32f45500-4ffe-4c60-afdc-f6255ea451e7";
     final String ADDIVERY_APPOPEN_ID = "0ea304f9-6d55-4971-92b0-fb246f28927a";
@@ -97,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         setupBackPressed();
 
         showHomePage();
+        initBilling();
+
     }
 
     private void initViews() {
@@ -185,20 +199,71 @@ public class MainActivity extends AppCompatActivity {
         rvPlaylists.setLayoutManager(new LinearLayoutManager(this));
         rvPlaylists.setAdapter(playlistAdapter);
 
-        findViewById(R.id.showVideosBtn).setOnClickListener(v -> {
-            ShowLastShownSerial();
-        });
 
-        findViewById(R.id.commentMainBtn).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CommentActivity.class);
-            startActivity(intent);
-        });
 
-        findViewById(R.id.otherAppsBtn).setOnClickListener(v -> com.codestoon.koodakboom.StoreIntents.openDeveloperPage(MainActivity.this));
+        // دکمه ادامه تماشا با انیمیشن
+        View showVideosBtn = findViewById(R.id.showVideosBtn);
+        if (showVideosBtn != null) {
+            showVideosBtn.setOnClickListener(v -> {
+                animateButton(v);
+                ShowLastShownSerial();
+            });
+        }
+
+        // دکمه نظر دادن با انیمیشن
+        View commentBtn = findViewById(R.id.commentMainBtn);
+        if (commentBtn != null) {
+            commentBtn.setOnClickListener(v -> {
+                animateButton(v);
+                Intent intent = new Intent(MainActivity.this, CommentActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        // دکمه نسخه ویژه با انیمیشن
+        View premiumBtn = findViewById(R.id.premiumBtn);
+        if (premiumBtn != null) {
+            premiumBtn.setOnClickListener(v -> {
+                animateButton(v);
+                showPremiumPurchaseDialog();
+            });
+        }
+
+        // دکمه سایر برنامه‌ها با انیمیشن
+        View otherAppsBtn = findViewById(R.id.otherAppsBtn);
+        if (otherAppsBtn != null) {
+            otherAppsBtn.setOnClickListener(v -> {
+                animateButton(v);
+                StoreIntents.openDeveloperPage(MainActivity.this);
+            });
+        }
+
+        // پیدا کردن FAB و تنظیم کلیک
+        FloatingActionButton fabComment = findViewById(R.id.fabComment);
+        if (fabComment != null) {
+            fabComment.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, CommentActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
 
-
+    // متد انیمیشن برای دکمه‌ها
+    private void animateButton(View button) {
+        button.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    button.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(100)
+                            .start();
+                })
+                .start();
+    }
     private void updateHeroWithLastWatched() {
         String lastPlaylistName = getLastWatchedPlaylist();
         String lastVideoKey = getLastWatchedVideoKey();
@@ -522,22 +587,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void showVideoOpenedAdd() {
-        if (rewardedCount < 3) showRewardAdd();
-    }
+
 
     public boolean showRewardAdd() {
-        //if (rewardedCount < 3) {
-        //    if (Adivery.isLoaded(ADDIVERY_REWARD_ID)) {
-        //        Adivery.showAd(ADDIVERY_REWARD_ID);
-        //        return true;
-        //    } else {
-        //        Adivery.prepareRewardedAd(MainActivity.this, ADDIVERY_REWARD_ID);
-        //        return false;
-        //    }
-        //}
-        //return false;
-        return true;
+
+        // ✅ بررسی پریمیوم بودن کاربر
+        if (billingManager != null && billingManager.isPremiumActivated()) {
+            Log.d(TAG, "User is PREMIUM, no ads shown");
+            return true; // بدون تبلیغ
+        }
+
+        // فقط اگر تعداد تبلیغات امروز کمتر از 3 است، نشان بده
+        if (rewardedCountToday() < 3) {
+            if (Adivery.isLoaded(ADDIVERY_REWARD_ID)) {
+                Adivery.showAd(ADDIVERY_REWARD_ID);
+                incrementRewardedCountToday();
+                return true;
+            } else {
+                Adivery.prepareRewardedAd(MainActivity.this, ADDIVERY_REWARD_ID);
+                return false;
+            }
+        }
+        return true; // بدون تبلیغ پخش کن
+    }
+
+    private int rewardedCountToday() {
+        SharedPreferences prefs = getSharedPreferences("ad_prefs", MODE_PRIVATE);
+        String today = new java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US).format(new java.util.Date());
+        return prefs.getInt("rewarded_" + today, 0);
+    }
+
+    private void incrementRewardedCountToday() {
+        SharedPreferences prefs = getSharedPreferences("ad_prefs", MODE_PRIVATE);
+        String today = new java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US).format(new java.util.Date());
+        int count = prefs.getInt("rewarded_" + today, 0);
+        prefs.edit().putInt("rewarded_" + today, count + 1).apply();
     }
 
     public boolean showOpenAdd() {
@@ -548,6 +632,45 @@ public class MainActivity extends AppCompatActivity {
             Adivery.prepareAppOpenAd(MainActivity.this, ADDIVERY_APPOPEN_ID);
             return false;
         }
+    }
+
+    private void showPremiumPurchaseDialog() {
+        // اگر قبلاً پریمیوم شده
+        if (billingManager != null && billingManager.isPremiumActivated()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("🎁 شما کاربر ویژه هستید!")
+                    .setMessage("با تشکر از حمایت شما، تبلیغات برای همیشه حذف شده است.\n\nکودک شما می‌تواند بدون وقفه از کارتون‌ها لذت ببرد.")
+                    .setPositiveButton("باشه 😊", null)
+                    .show();
+            return;
+        }
+
+        // دیالوگ خرید
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_premium, null);
+
+        TextView tvPrice = view.findViewById(R.id.tvPrice);
+        Button btnBuy = view.findViewById(R.id.btnBuy);
+        Button btnCancel = view.findViewById(R.id.btnCancel);
+
+        tvPrice.setText("39,000 تومان");
+
+        builder.setView(view);
+        builder.setCancelable(true);
+        AlertDialog dialog = builder.create();
+
+        btnBuy.setOnClickListener(v -> {
+            if (billingManager != null && billingManager.isReady()) {
+                billingManager.purchasePremium();
+                dialog.dismiss();
+            } else {
+                Toast.makeText(this, "⏳ سرویس پرداخت در حال آماده‌سازی...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void setupBackPressed() {

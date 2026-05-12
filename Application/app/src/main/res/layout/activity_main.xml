@@ -4,7 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl">
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_comment_fab"
+        app:fabSize="normal"
+        app:backgroundTint="#E67E22"
+        app:tint="@android:color/white" />
     <!-- صفحه خانه (Home) - کودک بوم با اسکرول تمام صفحه -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollHome"
@@ -173,105 +182,202 @@
                 android:paddingBottom="8dp"
                 android:clipToPadding="false" />
 
-            <!-- 3 دکمه پایین صفحه -->
+
+            <!-- دکمه‌های کارتونی پایین صفحه -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="16dp"
-                android:gravity="center">
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp">
 
+                <!-- ردیف اول -->
                 <LinearLayout
-                    android:id="@+id/showVideosBtn"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_bg"
-                    android:padding="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:clickable="true"
-                    android:focusable="true">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:text="📱"
-                        android:textSize="24sp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content" />
+                    <!-- دکمه ادامه تماشا (آبی) -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/showVideosBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="90dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardBackgroundColor="#4A90E2"
+                        app:cardElevation="6dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
 
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:text="ادامه تماشا"
-                        android:textSize="15sp"
-                        android:textColor="#1e293b"
-                        android:layout_marginTop="4dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:fontFamily="@font/yekan"
+                                android:text="🎬"
+                                android:textSize="32sp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+
+                            <TextView
+                                android:fontFamily="@font/yekan"
+                                android:text="ادامه تماشا"
+                                android:textSize="14sp"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:layout_marginTop="6dp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- دکمه نظر دادن (سبز) -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/commentMainBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="90dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardBackgroundColor="#50C878"
+                        app:cardElevation="6dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:fontFamily="@font/yekan"
+                                android:text="💬"
+                                android:textSize="32sp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+
+                            <TextView
+                                android:fontFamily="@font/yekan"
+                                android:text="نظر دادن"
+                                android:textSize="14sp"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:layout_marginTop="6dp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
 
+                <!-- ردیف دوم -->
                 <LinearLayout
-                    android:id="@+id/commentMainBtn"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_bg"
-                    android:padding="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:clickable="true"
-                    android:focusable="true">
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:text="💬"
-                        android:textSize="24sp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content" />
+                    <!-- دکمه نسخه ویژه (طلایی/نارنجی - برجسته) -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/premiumBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="90dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardBackgroundColor="#FF9800"
+                        app:cardElevation="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
 
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:text="نظر دادن"
-                        android:textSize="15sp"
-                        android:textColor="#1e293b"
-                        android:layout_marginTop="4dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content" />
-                </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
 
-                <LinearLayout
-                    android:id="@+id/otherAppsBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_bg"
-                    android:padding="12dp"
-                    android:layout_marginStart="4dp"
-                    android:clickable="true"
-                    android:focusable="true">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:text="📦"
-                        android:textSize="24sp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content" />
+                                <TextView
+                                    android:fontFamily="@font/yekan"
+                                    android:text="👑"
+                                    android:textSize="28sp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_width="wrap_content" />
 
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:text="سایر برنامه‌ها"
-                        android:textSize="15sp"
-                        android:textColor="#1e293b"
-                        android:layout_marginTop="4dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content" />
+                                <TextView
+                                    android:fontFamily="@font/yekan"
+                                    android:text="🎁"
+                                    android:textSize="28sp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_width="wrap_content"
+                                    android:layout_marginStart="4dp" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:fontFamily="@font/yekan"
+                                android:text="نسخه ویژه (حذف تبلیغ)"
+                                android:textSize="14sp"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:layout_marginTop="6dp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- دکمه سایر برنامه‌ها (بنفش) -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/otherAppsBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="90dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardBackgroundColor="#9C27B0"
+                        app:cardElevation="6dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:fontFamily="@font/yekan"
+                                android:text="📦"
+                                android:textSize="32sp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+
+                            <TextView
+                                android:fontFamily="@font/yekan"
+                                android:text="بیشتر"
+                                android:textSize="14sp"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:layout_marginTop="6dp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
             </LinearLayout>
-
             <!-- بنر تبلیغات -->
             <com.adivery.sdk.AdiveryBannerAdView
                 android:id="@+id/banner_ad"

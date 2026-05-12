@@ -138,6 +138,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (listener != null) {
                 stopVideo(holder);
                 currentlyPlayingPosition = -1;
+
                 listener.onVideoFullscreen(
                         video.getVideoKey(),
                         video.getTitle(),

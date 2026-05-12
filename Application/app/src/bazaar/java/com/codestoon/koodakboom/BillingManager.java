@@ -93,75 +93,91 @@ public class BillingManager {
         }
 
         try {
-            String payload = getOrCreatePayload();
+            // ✅ FIX: Generate a NEW unique payload for EVERY purchase
+            String payload = generateUniquePayload();
+            Log.d(TAG, "🆕 Generated new payload: " + payload);
+
             PurchaseRequest request = new PurchaseRequest(PREMIUM_KEY, payload, null);
 
-            mPayment.purchaseProduct(((MainActivity)activity).getActivityResultRegistry(), request, 
-                new Function1<ir.cafebazaar.poolakey.callback.PurchaseCallback, Unit>() {
-                    @Override
-                    public Unit invoke(ir.cafebazaar.poolakey.callback.PurchaseCallback callback) {
+            mPayment.purchaseProduct(((MainActivity)activity).getActivityResultRegistry(), request,
+                    new Function1<ir.cafebazaar.poolakey.callback.PurchaseCallback, Unit>() {
+                        @Override
+                        public Unit invoke(ir.cafebazaar.poolakey.callback.PurchaseCallback callback) {
 
-                        callback.purchaseSucceed(new Function1<PurchaseInfo, Unit>() {
-                            @Override
-                            public Unit invoke(PurchaseInfo purchaseInfo) {
-                                Log.d(TAG, "✅ Bazaar purchase successful");
-                                activatePremiumFeatures();
-                                ToastUtils.showSafeToast(activity, "✅ پرداخت با موفقیت انجام شد");
-                                return Unit.INSTANCE;
-                            }
-                        });
+                            callback.purchaseSucceed(new Function1<PurchaseInfo, Unit>() {
+                                @Override
+                                public Unit invoke(PurchaseInfo purchaseInfo) {
+                                    Log.d(TAG, "✅ Bazaar purchase successful");
+                                    activatePremiumFeatures();
+                                    ToastUtils.showSafeToast(activity, "✅ پرداخت با موفقیت انجام شد");
+                                    return Unit.INSTANCE;
+                                }
+                            });
 
-                        callback.purchaseCanceled(new Function0<Unit>() {
-                            @Override
-                            public Unit invoke() {
-                                Log.w(TAG, "⚠️ Purchase canceled");
-                                return Unit.INSTANCE;
-                            }
-                        });
+                            callback.purchaseCanceled(new Function0<Unit>() {
+                                @Override
+                                public Unit invoke() {
+                                    Log.w(TAG, "⚠️ Purchase canceled");
+                                    return Unit.INSTANCE;
+                                }
+                            });
 
-                        callback.purchaseFailed(new Function1<Throwable, Unit>() {
-                            @Override
-                            public Unit invoke(Throwable throwable) {
-                                Log.e(TAG, "❌ Purchase failed: " + throwable.getMessage());
-                                ToastUtils.showSafeToast(activity, "❌ پرداخت انجام نشد");
-                                return Unit.INSTANCE;
-                            }
-                        });
+                            callback.purchaseFailed(new Function1<Throwable, Unit>() {
+                                @Override
+                                public Unit invoke(Throwable throwable) {
+                                    Log.e(TAG, "❌ Purchase failed: " + throwable.getMessage());
 
-                        return Unit.INSTANCE;
-                    }
-                });
+                                    // Check for hijack exception
+                                    if (throwable.getMessage() != null &&
+                                            throwable.getMessage().contains("PurchaseHijackedException")) {
+                                        ToastUtils.showSafeToast(activity, "❌ خطا در ارتباط، لطفا دوباره تلاش کنید");
+                                    } else {
+                                        ToastUtils.showSafeToast(activity, "❌ پرداخت انجام نشد");
+                                    }
+                                    return Unit.INSTANCE;
+                                }
+                            });
+
+                            return Unit.INSTANCE;
+                        }
+                    });
         } catch (Exception e) {
             Log.e(TAG, "❌ Error during purchase: " + e.getMessage());
             ToastUtils.showSafeToast(activity, "❌ خطا در پرداخت");
         }
     }
 
+    // ✅ NEW METHOD: Generate a unique payload for each purchase
+    private String generateUniquePayload() {
+        // Combine timestamp with UUID for extra uniqueness
+        return System.currentTimeMillis() + "_" + java.util.UUID.randomUUID().toString();
+    }
+
     private void activatePremiumFeatures() {
         editor.putBoolean("premium_activated", true);
         editor.apply();
-        updateAppData();
+        //updateAppData();
     }
 
     private void updateAppData() {
         try {
-            editor.putInt("download_sound_counter", 2);
-            editor.commit();
+            //editor.putInt("download_sound_counter", 2);
+            //editor.commit();
             // NetController.getInstance(activity).DownloadSoundList();
         } catch (Exception e) {
             Log.e(TAG, "❌ Error updating app data: " + e.getMessage());
         }
     }
 
-    private String getOrCreatePayload() {
-        String payload = prefs.getString("bazaar_payload", "");
-        if (payload.isEmpty()) {
-            payload = java.util.UUID.randomUUID().toString();
-            editor.putString("bazaar_payload", payload);
-            editor.apply();
-        }
-        return payload;
-    }
+
+
+
+
+
+
+
+
+
 
     public boolean isPremiumActivated() {
         return prefs.getBoolean("premium_activated", false);

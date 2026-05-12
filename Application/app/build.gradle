@@ -14,8 +14,8 @@ android {
         applicationId "com.codestoon.koodakboom"
         minSdk 24
         targetSdk 36
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,7 +39,7 @@ android {
                     marketBindAddress: "${marketBindAddress}",
                     marketPermission: "${marketApplicationId}.BILLING"
             ]
-            buildConfigField "String", "IAB_PUBLIC_KEY", "\"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCutqcsnvRDoSDY0yYO+xGoNx/Ikcl04L9ka19lGpAdE4CYrrphs31VXqI9nC9AV7fkM/AkiHWe7iEjNAIpln/g2QJPqBCfK+x2/DwkViFo1XfRVe7kFjO0yAyBXMdvEjKOrj+mQKZcRmDiYq5Wa+ntObfyuHl4sxeGjZBQ/gnrkQIDAQAB\""
+            buildConfigField "String", "IAB_PUBLIC_KEY", "\"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCb2XB7dmFB3vAHgEEc/9CwTCw8hOb4ojgX/hyOCJ7Q6AxN0GOxhmi2NjLCXiQwMr2R+jb9109fHXXK0NHikcmWCiW6TsrYWvgAUzLKNvBoipJ+C59AD0M+Mvia9QGMeOu+4ieTivxABXb2yh8RlwQETP4wXFIRdMt3gEaoB8Pj4wIDAQAB\""
             buildConfigField "String", "STORE_NAME", "\"myket\""
         }
 
@@ -56,7 +56,7 @@ android {
                     marketBindAddress: "${marketBindAddress}",
                     marketPermission: "com.farsitel.bazaar.permission.PAY_THROUGH_BAZAAR"
             ]
-            buildConfigField "String", "IAB_PUBLIC_KEY", "\"MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwCnonCeXAr6fC6Y1QDQOMo140bLrmOFLIcZp3I0M8uNc7IIfA6DecM1z4Y2OQdOYemPguqA6vyo4+3ysOhAui0C7D7y1ug35NK+G31/IlFY15RcaYhfcU8BSFIB5y5pyWGw32E0eaxYiMJBZNZPGfAFRmkkRK0B6PKapKuDZjMqP/DvJ93UZDttR4FWaXEzj7XXFiIrS3mKk+5R6RF9A+cp4nYi9HxX6e9RPXurK5MCAwEAAQ==\""
+            buildConfigField "String", "IAB_PUBLIC_KEY", "\"MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwDJj5btdckeUJuSXWBdGmdjH3YInXmtKfM8hCP19qnTUhYFbiZj5ql0AohAT0MqefZRqjlWctMfhBqbbuJcEpnSh9C3qL030zFaPT+VPSfrfMdN0zf4vXltRxiZZE0fYM0BX+SABEWs0NjTE9QqQ5e5yj/NoIDoQEh38niweLshL7PA/GGqF1k8VP2C0B7nrandcitxgMQNKfaeTxNScd1t+LgT/rORsaddxuaiX7sCAwEAAQ==\""
             buildConfigField "String", "STORE_NAME", "\"bazaar\""
         }
     }

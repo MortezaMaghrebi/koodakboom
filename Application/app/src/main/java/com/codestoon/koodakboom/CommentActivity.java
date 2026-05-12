@@ -47,7 +47,7 @@ public class CommentActivity extends AppCompatActivity {
     private void sendPositiveCommentToStore() {
         // ارسال نظر رضایت به مایکت
         try {
-            com.codestoon.koodakboom.StoreIntents.openStoreForComment(CommentActivity.this);
+            StoreIntents.openStoreForComment(CommentActivity.this);
             finish();
         } catch (Exception e) {
             Toast.makeText(CommentActivity.this,
