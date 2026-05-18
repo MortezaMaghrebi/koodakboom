@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 2,
-      "versionName": "1.1-myket",
+      "versionCode": 3,
+      "versionName": "1.2-myket",
       "outputFile": "app-myket-release.apk"
     }
   ],

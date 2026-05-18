@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout btnBackFromSearch;
 
     private WatchHistoryManager historyManager;
-
+    private LinearLayout bannerAdContainer;
     @Override
     protected void onPause() {
         lastPauseTime = System.currentTimeMillis();
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         setupSearchPage();
         setupAdivery();
         setupBackPressed();
-
+        setupBannerAdVisibility();
         showHomePage();
         initBilling();
 
@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         rvSearchResultsList = findViewById(R.id.rvSearchResultsList);
         tvSearchResultCount = findViewById(R.id.tvSearchResultCount);
         btnBackFromSearch = findViewById(R.id.btnBackFromSearch);
+        bannerAdContainer = findViewById(R.id.bannerAdContainer);
     }
 
     private void loadPlaylistsFromAssets() {
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // دکمه ادامه تماشا با انیمیشن
-        View showVideosBtn = findViewById(R.id.showVideosBtn);
+        View showVideosBtn = findViewById(R.id.continueWatchingButton);
         if (showVideosBtn != null) {
             showVideosBtn.setOnClickListener(v -> {
                 animateButton(v);
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // دکمه نظر دادن با انیمیشن
-        View commentBtn = findViewById(R.id.commentMainBtn);
+        View commentBtn = findViewById(R.id.commentButton);
         if (commentBtn != null) {
             commentBtn.setOnClickListener(v -> {
                 animateButton(v);
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // دکمه نسخه ویژه با انیمیشن
-        View premiumBtn = findViewById(R.id.premiumBtn);
+        View premiumBtn = findViewById(R.id.premiumButton);
         if (premiumBtn != null) {
             premiumBtn.setOnClickListener(v -> {
                 animateButton(v);
@@ -230,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // دکمه سایر برنامه‌ها با انیمیشن
-        View otherAppsBtn = findViewById(R.id.otherAppsBtn);
+        View otherAppsBtn = findViewById(R.id.otherAppsButton);
         if (otherAppsBtn != null) {
             otherAppsBtn.setOnClickListener(v -> {
                 animateButton(v);
@@ -248,7 +249,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    private void setupBannerAdVisibility() {
+        if (bannerAdContainer == null) return;
+        if (BillingManager.getInstance(MainActivity.this).isPremiumActivated()) {
+            bannerAdContainer.setVisibility(View.GONE);
+        } else {
+            bannerAdContainer.setVisibility(View.VISIBLE);
+        }
+    }
     // متد انیمیشن برای دکمه‌ها
     private void animateButton(View button) {
         button.animate()

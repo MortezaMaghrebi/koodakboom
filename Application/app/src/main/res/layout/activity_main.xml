@@ -4,615 +4,615 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl">
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabComment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_comment_fab"
-        app:fabSize="normal"
-        app:backgroundTint="#E67E22"
-        app:tint="@android:color/white" />
+
     <!-- صفحه خانه (Home) - کودک بوم با اسکرول تمام صفحه -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollHome"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:id="@+id/pageHome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#FFF9F0">
-
-            <!-- هدر -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:paddingTop="40dp"
-                android:background="@drawable/home_bg_gradient">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="🌈 کودک بوم"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:shadowColor="#E67E22"
-                        android:shadowDx="2"
-                        android:shadowDy="2"
-                        android:shadowRadius="4" />
-
-                    <ImageView
-                        android:id="@+id/homeSearchBtn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_search"
-                        android:background="@drawable/search_bg"
-                        android:padding="8dp" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🧸 تماشای امن انیمیشن و سریال کودک"
-                    android:textSize="14sp"
-                    android:textColor="#FFE0B5"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Hero Banner -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:background="@drawable/hero_bg">
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="0dp">
-
-                        <ImageView
-                            android:id="@+id/ivTitlePicture"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/titleimage" />
-
-                    </androidx.cardview.widget.CardView>
-
-                    <ImageView
-                        android:id="@+id/playHeroBtn"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_play_black"
-                        android:background="@drawable/play_bg_glass"
-                        android:padding="14dp" />
-
-                </RelativeLayout>
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:id="@+id/tvHeroTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="12dp"
-                    android:textColor="#2D1B4E" />
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:id="@+id/tvHeroDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#E67E22"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- عنوان بخش پلی‌لیست‌ها -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp">
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="📺 مجموعه‌های کودکانه"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#2D1B4E" />
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:id="@+id/tvPlaylistCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="13sp"
-                    android:textColor="#E67E22" />
-            </LinearLayout>
-
-            <!-- RecyclerView برای نمایش پلی‌لیست‌ها -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPlaylists"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="8dp"
-                android:clipToPadding="false" />
-
-
-            <!-- دکمه‌های کارتونی پایین صفحه -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="16dp">
-
-                <!-- ردیف اول -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
-
-                    <!-- دکمه ادامه تماشا (آبی) -->
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/showVideosBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="90dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardBackgroundColor="#4A90E2"
-                        app:cardElevation="6dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:fontFamily="@font/yekan"
-                                android:text="🎬"
-                                android:textSize="32sp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content" />
-
-                            <TextView
-                                android:fontFamily="@font/yekan"
-                                android:text="ادامه تماشا"
-                                android:textSize="14sp"
-                                android:textColor="#FFFFFF"
-                                android:textStyle="bold"
-                                android:layout_marginTop="6dp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- دکمه نظر دادن (سبز) -->
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/commentMainBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="90dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardBackgroundColor="#50C878"
-                        app:cardElevation="6dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:fontFamily="@font/yekan"
-                                android:text="💬"
-                                android:textSize="32sp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content" />
-
-                            <TextView
-                                android:fontFamily="@font/yekan"
-                                android:text="نظر دادن"
-                                android:textSize="14sp"
-                                android:textColor="#FFFFFF"
-                                android:textStyle="bold"
-                                android:layout_marginTop="6dp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-                </LinearLayout>
-
-                <!-- ردیف دوم -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:orientation="horizontal">
-
-                    <!-- دکمه نسخه ویژه (طلایی/نارنجی - برجسته) -->
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/premiumBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="90dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardBackgroundColor="#FF9800"
-                        app:cardElevation="8dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:fontFamily="@font/yekan"
-                                    android:text="👑"
-                                    android:textSize="28sp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_width="wrap_content" />
-
-                                <TextView
-                                    android:fontFamily="@font/yekan"
-                                    android:text="🎁"
-                                    android:textSize="28sp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_width="wrap_content"
-                                    android:layout_marginStart="4dp" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:fontFamily="@font/yekan"
-                                android:text="نسخه ویژه (حذف تبلیغ)"
-                                android:textSize="14sp"
-                                android:textColor="#FFFFFF"
-                                android:textStyle="bold"
-                                android:layout_marginTop="6dp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- دکمه سایر برنامه‌ها (بنفش) -->
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/otherAppsBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="90dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardBackgroundColor="#9C27B0"
-                        app:cardElevation="6dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:fontFamily="@font/yekan"
-                                android:text="📦"
-                                android:textSize="32sp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content" />
-
-                            <TextView
-                                android:fontFamily="@font/yekan"
-                                android:text="بیشتر"
-                                android:textSize="14sp"
-                                android:textColor="#FFFFFF"
-                                android:textStyle="bold"
-                                android:layout_marginTop="6dp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-                </LinearLayout>
-            </LinearLayout>
-            <!-- بنر تبلیغات -->
-            <com.adivery.sdk.AdiveryBannerAdView
-                android:id="@+id/banner_ad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="16dp"
-                app:banner_size="banner" />
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- صفحه لیست ویدیوها با اسکرول تمام صفحه -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:visibility="gone"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:id="@+id/pageList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#F9F5F0">
-
-            <!-- هدر صفحه لیست -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:background="#FFFFFF"
-                android:elevation="4dp">
-
-                <LinearLayout
-                    android:id="@+id/backToHomeBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:background="@drawable/back_bg"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_marginBottom="12dp">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_back" />
-
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:text="بازگشت"
-                        android:textSize="14sp"
-                        android:textColor="#E67E22"
-                        android:layout_marginStart="8dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content" />
-                </LinearLayout>
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:id="@+id/tvListTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#2D1B4E"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:id="@+id/tvListDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="13sp"
-                    android:textColor="#E67E22"
-                    android:layout_marginBottom="16dp" />
-
-                <EditText
-                    android:id="@+id/searchInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="🔍 جستجو در قسمت‌ها..."
-                    android:background="@drawable/search_bg"
-                    android:padding="12dp"
-                    android:layout_marginBottom="16dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end">
-
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:id="@+id/toggleGrid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📱 نمای اینستاگرامی"
-                        android:textColor="@color/white"
-                        android:background="@drawable/toggle_active_bg"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:fontFamily="@font/yekan"
-                        android:id="@+id/toggleList"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📋 نمای لیستی"
-                        android:textColor="@color/black"
-                        android:background="@drawable/toggle_inactive_bg"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- RecyclerView با ارتفاع wrap_content -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:padding="8dp" />
-
-            <!-- بنر تبلیغات دوم -->
-            <com.adivery.sdk.AdiveryBannerAdView
-                android:id="@+id/banner_ad2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                app:placement_id="e354955a-a82c-418f-80cb-735ef2ecea85"
-                app:banner_size="banner" />
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- صفحه جستجوی جهانی -->
-    <LinearLayout
-        android:id="@+id/pageSearch"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#F9F5F0"
-        android:visibility="gone">
-
-        <!-- هدر صفحه جستجو -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#FFFFFF"
-            android:elevation="4dp">
-
-            <LinearLayout
-                android:id="@+id/btnBackFromSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/back_bg"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:layout_marginBottom="12dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back" />
-
-                <TextView
-                    android:fontFamily="@font/yekan"
-                    android:text="بازگشت"
-                    android:textSize="14sp"
-                    android:textColor="#E67E22"
-                    android:layout_marginStart="8dp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content" />
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/searchGlobalInput"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="🔍 جستجو در بین همه ویدیوها..."
-                android:background="@drawable/search_bg"
-                android:padding="12dp"
-                android:layout_marginBottom="12dp" />
-
-            <TextView
-                android:fontFamily="@font/yekan"
-                android:id="@+id/tvSearchResultCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="12sp"
-                android:textColor="#E67E22" />
-
-        </LinearLayout>
-
-        <!-- RecyclerView نتایج جستجو -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSearchResultsList"
+        android:background="#ffffff">
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false" />
+            android:layout_above="@+id/llFooterButtons">
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollHome"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/pageHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFF9F0"
+                    android:orientation="vertical">
 
-    <!-- کانتینر تمام صفحه برای ویدیوهای امبد -->
-    <FrameLayout
-        android:id="@+id/fullscreenContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="#000000" />
+                    <!-- هدر -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/home_bg_gradient"
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:paddingTop="40dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/yekan"
+                                android:shadowColor="#E67E22"
+                                android:shadowDx="2"
+                                android:shadowDy="2"
+                                android:shadowRadius="4"
+                                android:text="🌈 کودک بوم"
+                                android:textColor="#FFFFFF"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/homeSearchBtn"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:background="@drawable/search_bg"
+                                android:padding="8dp"
+                                android:src="@drawable/ic_search" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/yekan"
+                            android:text="🧸 تماشای امن انیمیشن و سریال کودک"
+                            android:textColor="#FFE0B5"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <!-- Hero Banner -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="8dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp"
+                            android:background="@drawable/hero_bg">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:cardCornerRadius="24dp"
+                                app:cardElevation="0dp">
+
+                                <ImageView
+                                    android:id="@+id/ivTitlePicture"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/titleimage" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <ImageView
+                                android:id="@+id/playHeroBtn"
+                                android:layout_width="56dp"
+                                android:layout_height="56dp"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/play_bg_glass"
+                                android:padding="14dp"
+                                android:src="@drawable/ic_play_black" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/tvHeroTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/yekan"
+                            android:text=""
+                            android:textColor="#2D1B4E"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvHeroDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/yekan"
+                            android:text=""
+                            android:textColor="#E67E22" />
+                    </LinearLayout>
+
+                    <!-- عنوان بخش پلی‌لیست‌ها -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="16dp"
+                        android:paddingRight="20dp"
+                        android:paddingBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/yekan"
+                            android:text="📺 مجموعه‌های کودکانه"
+                            android:textColor="#2D1B4E"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvPlaylistCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yekan"
+                            android:text=""
+                            android:textColor="#E67E22"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <!-- RecyclerView برای نمایش پلی‌لیست‌ها -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvPlaylists"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="4dp"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="8dp" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- صفحه لیست ویدیوها با اسکرول تمام صفحه -->
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/pageList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#F9F5F0"
+                    android:orientation="vertical">
+
+                    <!-- هدر صفحه لیست -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
+                        android:elevation="4dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:id="@+id/backToHomeBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:background="@drawable/back_bg"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingLeft="16dp"
+                            android:paddingTop="8dp"
+                            android:paddingRight="16dp"
+                            android:paddingBottom="8dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_back" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:fontFamily="@font/yekan"
+                                android:text="بازگشت"
+                                android:textColor="#E67E22"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvListTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:fontFamily="@font/yekan"
+                            android:text=""
+                            android:textColor="#2D1B4E"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvListDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:fontFamily="@font/yekan"
+                            android:text=""
+                            android:textColor="#E67E22"
+                            android:textSize="13sp" />
+
+                        <EditText
+                            android:id="@+id/searchInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginBottom="16dp"
+                            android:background="@drawable/search_bg"
+                            android:hint="🔍 جستجو در قسمت‌ها..."
+                            android:padding="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/toggleGrid"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/toggle_active_bg"
+                                android:fontFamily="@font/yekan"
+                                android:paddingLeft="16dp"
+                                android:paddingTop="8dp"
+                                android:paddingRight="16dp"
+                                android:paddingBottom="8dp"
+                                android:text="📱 نمای اینستاگرامی"
+                                android:textColor="@color/white" />
+
+                            <TextView
+                                android:id="@+id/toggleList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_inactive_bg"
+                                android:fontFamily="@font/yekan"
+                                android:paddingLeft="16dp"
+                                android:paddingTop="8dp"
+                                android:paddingRight="16dp"
+                                android:paddingBottom="8dp"
+                                android:text="📋 نمای لیستی"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- RecyclerView با ارتفاع wrap_content -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:padding="8dp" />
+
+                    <!-- بنر تبلیغات دوم -->
+                    <com.adivery.sdk.AdiveryBannerAdView
+                        android:id="@+id/banner_ad2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:padding="8dp"
+                        app:banner_size="banner"
+                        app:placement_id="e354955a-a82c-418f-80cb-735ef2ecea85" />
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- صفحه جستجوی جهانی -->
+            <LinearLayout
+                android:id="@+id/pageSearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F9F5F0"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- هدر صفحه جستجو -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:elevation="4dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:id="@+id/btnBackFromSearch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/back_bg"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_back" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="@font/yekan"
+                            android:text="بازگشت"
+                            android:textColor="#E67E22"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/searchGlobalInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/search_bg"
+                        android:hint="🔍 جستجو در بین همه ویدیوها..."
+                        android:padding="12dp" />
+
+                    <TextView
+                        android:id="@+id/tvSearchResultCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/yekan"
+                        android:text=""
+                        android:textColor="#E67E22"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <!-- RecyclerView نتایج جستجو -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSearchResultsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+            <!-- کانتینر تمام صفحه برای ویدیوهای امبد -->
+            <FrameLayout
+                android:id="@+id/fullscreenContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#000000"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:id="@+id/llFooterButtons"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:paddingBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:id="@+id/bannerAdLayout"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+                <!-- بنر تبلیغات (فقط برای کاربران رایگان) -->
+                <LinearLayout
+                    android:id="@+id/bannerAdContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.adivery.sdk.AdiveryBannerAdView
+                        android:id="@+id/banner_ad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:banner_size="banner" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- دکمه‌های پایین (طراحی جدید) -->
+            <!-- دکمه‌های پایین (طراحی جدید با دکمه سایر اپ‌ها) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:elevation="10dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                android:paddingBottom="16dp">
+
+                <LinearLayout
+                    android:id="@+id/continueWatchingButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/circle_button_bg_search">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_continue_watching"
+                            app:tint="#FFFFFF" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/yekan"
+                        android:text="ادامه تماشا"
+                        android:textColor="#3498db"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/premiumButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/circle_button_bg_favorite">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_crown"
+                            app:tint="#FFFFFF" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/yekan"
+                        android:text="نسخه پرو"
+                        android:textColor="#E74C3C"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/commentButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/circle_button_bg_mastered">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_comment"
+                            app:tint="#FFFFFF" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/yekan"
+                        android:text="نظر دادن"
+                        android:textColor="#27AE60"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:id="@+id/otherAppsButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/circle_button_bg_other">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_other_apps"
+                            app:tint="#FFFFFF" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/yekan"
+                        android:text="سایر اپ‌ها"
+                        android:textColor="#FF9800"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
+
 
 </FrameLayout>
