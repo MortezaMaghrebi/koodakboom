@@ -95,8 +95,8 @@
             android:id="@+id/tvWatchedBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="✓ دیده شده"
-            android:textSize="10sp"
+            android:text="✅ دیده شده"
+            android:textSize="14dp"
             android:textColor="#10B981"
             android:visibility="gone" />
 

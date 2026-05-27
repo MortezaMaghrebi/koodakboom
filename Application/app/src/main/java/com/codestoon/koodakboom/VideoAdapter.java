@@ -104,7 +104,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if (isWatched) {
             holder.tvWatchedBadge.setVisibility(View.VISIBLE);
-            holder.tvWatchedBadge.setText("✓ دیده شده");
+            holder.tvWatchedBadge.setText("✅ دیده شده");
         } else {
             holder.tvWatchedBadge.setVisibility(View.GONE);
         }
@@ -333,7 +333,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if (isWatched) {
             holder.tvWatchedBadge.setVisibility(View.VISIBLE);
-            holder.tvWatchedBadge.setText("✓ دیده شده");
+            holder.tvWatchedBadge.setText("✅ دیده شده");
         } else {
             holder.tvWatchedBadge.setVisibility(View.GONE);
         }

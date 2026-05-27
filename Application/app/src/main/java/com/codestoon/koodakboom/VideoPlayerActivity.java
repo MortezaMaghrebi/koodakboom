@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
@@ -66,11 +67,29 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private boolean isFullscreen = false;
     private int originalOrientation;
 
+    private void fixBottomPaddingForNavigationBar() {
+        View rootView = findViewById(android.R.id.content);
+        rootView.post(() -> {
+            int navigationBarHeight = getNavigationBarHeight();
+            if (navigationBarHeight > 0) {
+                rootView.setPadding(0, 0, 0, navigationBarHeight);
+            }
+        });
+    }
+
+    private int getNavigationBarHeight() {
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
-
+        fixBottomPaddingForNavigationBar();
         dataManager = new DataManager(this);
         historyManager = new WatchHistoryManager(this);
         initViews();
@@ -359,6 +378,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (tvLoadingText != null) tvLoadingText.setVisibility(View.GONE);
                 markVideoAsWatched();
+                new Handler(android.os.Looper.getMainLooper()).postDelayed(() -> enterFullscreen(), 500);
+
             }
 
             @Override

@@ -5,13 +5,17 @@ import static android.content.ContentValues.TAG;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -73,10 +77,20 @@ public class MainActivity extends AppCompatActivity {
 
     private WatchHistoryManager historyManager;
     private LinearLayout bannerAdContainer;
+    private Parcelable recyclerViewState;
+    private Parcelable playlistRecyclerViewState;
+
     @Override
     protected void onPause() {
         lastPauseTime = System.currentTimeMillis();
         super.onPause();
+        // ذخیره موقعیت اسکرول قبل از خروج
+        if (recyclerView != null && recyclerView.getLayoutManager() != null) {
+            recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
+        }
+        if (rvPlaylists != null && rvPlaylists.getLayoutManager() != null) {
+            playlistRecyclerViewState = rvPlaylists.getLayoutManager().onSaveInstanceState();
+        }
     }
 
     @Override
@@ -90,12 +104,54 @@ public class MainActivity extends AppCompatActivity {
         if (!isOnHomePage) {
             updateHeroWithLastWatched();
         }
+        // ریفرش آداپتورها بدون از دست دادن موقعیت
+        refreshAdaptersWithoutScrolling();
     }
 
+    private void refreshAdaptersWithoutScrolling() {
+        // به روز رسانی Hero
+        updateHeroWithLastWatched();
+
+        // ریفرش آداپتور پلی‌لیست‌ها با حفظ موقعیت
+        if (playlistAdapter != null) {
+            playlistAdapter.notifyItemRangeChanged(0, playlistAdapter.getItemCount());
+            // بازیابی موقعیت
+            if (playlistRecyclerViewState != null && rvPlaylists != null) {
+                rvPlaylists.getLayoutManager().onRestoreInstanceState(playlistRecyclerViewState);
+            }
+        }
+
+        // ریفرش آداپتور ویدیو با حفظ موقعیت
+        if (videoAdapter != null && currentPlaylist != null) {
+            videoAdapter.notifyItemRangeChanged(0, videoAdapter.getItemCount());
+            if (recyclerViewState != null && recyclerView != null) {
+                recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+            }
+        }
+    }
+    private void fixBottomPaddingForNavigationBar() {
+        View rootView = findViewById(android.R.id.content);
+        rootView.post(() -> {
+            int navigationBarHeight = getNavigationBarHeight();
+            if (navigationBarHeight > 0) {
+                rootView.setPadding(0, 0, 0, navigationBarHeight);
+            }
+        });
+    }
+
+    private int getNavigationBarHeight() {
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // تنظیم برای نمایش محتوا زیر Status Bar و Navigation Bar
+           setContentView(R.layout.activity_main);
+        fixBottomPaddingForNavigationBar();
 
         historyManager = new WatchHistoryManager(this);  // اضافه کنید
 
