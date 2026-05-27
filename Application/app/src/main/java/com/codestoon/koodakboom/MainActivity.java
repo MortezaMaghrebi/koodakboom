@@ -129,29 +129,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private void fixBottomPaddingForNavigationBar() {
-        View rootView = findViewById(android.R.id.content);
-        rootView.post(() -> {
-            int navigationBarHeight = getNavigationBarHeight();
-            if (navigationBarHeight > 0) {
-                rootView.setPadding(0, 0, 0, navigationBarHeight);
-            }
-        });
-    }
 
-    private int getNavigationBarHeight() {
-        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return getResources().getDimensionPixelSize(resourceId);
-        }
-        return 0;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // تنظیم برای نمایش محتوا زیر Status Bar و Navigation Bar
            setContentView(R.layout.activity_main);
-        fixBottomPaddingForNavigationBar();
 
         historyManager = new WatchHistoryManager(this);  // اضافه کنید
 
