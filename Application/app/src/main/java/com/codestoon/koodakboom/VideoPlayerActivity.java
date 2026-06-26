@@ -361,7 +361,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (tvLoadingText != null) tvLoadingText.setVisibility(View.GONE);
                 markVideoAsWatched();
-                new Handler(android.os.Looper.getMainLooper()).postDelayed(() -> enterFullscreen(), 500);
+                //new Handler(android.os.Looper.getMainLooper()).postDelayed(() -> enterFullscreen(), 500);
 
             }
 
